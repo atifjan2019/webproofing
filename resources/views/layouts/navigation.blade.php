@@ -56,13 +56,13 @@
                         x-transition:leave="transition ease-in duration-100"
                         x-transition:leave-start="opacity-100 translate-y-0"
                         x-transition:leave-end="opacity-0 translate-y-1" x-cloak>
-                        <a href="{{ route('profile.edit') }}" class="dropdown-item">
+                        <!-- <a href="{{ route('profile.edit') }}" class="dropdown-item">
                             <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                             Profile Settings
-                        </a>
+                        </a> -->
                         <div class="dropdown-divider"></div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -115,7 +115,7 @@
                 </div>
             </div>
             <div class="flex flex-col gap-sm">
-                <a href="{{ route('profile.edit') }}" class="nav-link">Profile Settings</a>
+                <!-- <a href="{{ route('profile.edit') }}" class="nav-link">Profile Settings</a> -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="nav-link text-danger w-full text-left">Sign Out</button>
