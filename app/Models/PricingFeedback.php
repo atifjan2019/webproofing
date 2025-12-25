@@ -9,6 +9,8 @@ class PricingFeedback extends Model
 {
     use HasFactory;
 
+    protected $table = 'pricing_feedbacks';
+
     protected $fillable = ['user_id', 'price_opinion', 'suggestion', 'ip_address'];
 
     public function user()
