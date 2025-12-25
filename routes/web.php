@@ -22,6 +22,8 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::view('/pricing', 'pricing')->name('pricing');
+    Route::post('/pricing/feedback', [App\Http\Controllers\PricingFeedbackController::class, 'store'])->name('pricing.feedback');
 
     // Profile routes (Disabled for Public Testing)
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

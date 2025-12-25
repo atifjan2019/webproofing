@@ -18,6 +18,10 @@
                         class="nav-link {{ request()->routeIs('sites.*') ? 'active' : '' }}">
                         Websites
                     </a>
+                    <a href="{{ route('pricing') }}"
+                        class="nav-link {{ request()->routeIs('pricing') ? 'active' : '' }}">
+                        Pricing
+                    </a>
                 </div>
             </div>
 
@@ -98,6 +102,9 @@
             </a>
             <a href="{{ route('sites.index') }}" class="nav-link {{ request()->routeIs('sites.*') ? 'active' : '' }}">
                 Websites
+            </a>
+            <a href="{{ route('pricing') }}" class="nav-link {{ request()->routeIs('pricing') ? 'active' : '' }}">
+                Pricing
             </a>
             <a href="{{ route('sites.create') }}" class="btn btn-primary btn-full mt-md">
                 Add New Website
