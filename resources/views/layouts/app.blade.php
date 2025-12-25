@@ -6,9 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'WebProofing') }} - Website Monitoring</title>
+    <title>WebProofing - Website Monitoring</title>
     <meta name="description"
         content="Professional website monitoring and screenshot tracking. Keep your digital properties safe and monitored 24/7.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WebProofing">
+    <meta property="og:title" content="WebProofing - Website Monitoring">
+    <meta property="og:description"
+        content="Professional website monitoring and screenshot tracking. Keep your digital properties safe and monitored 24/7.">
+    <meta property="og:image" content="{{ url('/favicon.svg') }}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="WebProofing - Website Monitoring">
+    <meta name="twitter:description" content="Professional website monitoring and screenshot tracking.">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
