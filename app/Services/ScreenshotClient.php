@@ -12,8 +12,8 @@ class ScreenshotClient
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(env('SCREENSHOT_API_BASE'), '/');
-        $this->token = env('SCREENSHOT_API_TOKEN');
+        $this->baseUrl = rtrim(config('services.screenshot.base'), '/');
+        $this->token = config('services.screenshot.token');
     }
 
     /**

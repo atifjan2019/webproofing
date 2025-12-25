@@ -67,8 +67,8 @@ class SiteScreenshot extends Model
     public function getImageSrcAttribute()
     {
         if ($this->image_path) {
-            $base = rtrim(env('SCREENSHOT_API_BASE'), '/');
-            $token = env('SCREENSHOT_IMAGE_TOKEN');
+            $base = rtrim(config('services.screenshot.base'), '/');
+            $token = config('services.screenshot.image_token');
             return "{$base}/image/{$this->image_path}?token={$token}";
         }
 

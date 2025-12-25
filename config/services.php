@@ -34,7 +34,14 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT_URL'),
+        // 'redirect' => env('GOOGLE_REDIRECT_URL'), // OLD
+        'redirect' => env('GOOGLE_REDIRECT_URI'), // NEW
+    ],
+
+    'screenshot' => [
+        'base' => env('SCREENSHOT_API_BASE'),
+        'token' => env('SCREENSHOT_API_TOKEN'),
+        'image_token' => env('SCREENSHOT_IMAGE_TOKEN'),
     ],
 
 ];
