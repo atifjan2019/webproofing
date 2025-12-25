@@ -1,6 +1,5 @@
 <x-app-layout>
-    <div class="container"
-        x-data="{ modalOpen: false, modalImage: '', openModal(src) { this.modalImage = src; this.modalOpen = true; } }">
+    <div class="container">
         <!-- Header -->
         <div class="flex flex-col gap-lg mb-lg" style="flex-direction: column;">
             <div class="flex items-center gap-md">
@@ -75,12 +74,11 @@
                 <!-- Screenshots Grid -->
                 <div class="grid grid-cols-2 sm-grid-cols-4 lg-grid-cols-7 gap-md">
                     @foreach ($screenshots as $index => $screenshot)
-                        <div class="screenshot-card animate-fadeInUp" style="animation-delay: {{ $index * 30 }}ms"
-                            @click="openModal('{{ $screenshot->image_src }}')">
+                        <a href="{{ $screenshot->image_src }}" target="_blank" class="screenshot-card animate-fadeInUp" style="animation-delay: {{ $index * 30 }}ms">
                             <div class="screenshot-image">
                                 <img src="{{ $screenshot->image_src }}" alt="Screenshot">
                                 <div class="screenshot-overlay">
-                                    <span class="text-white text-xs font-medium">Click to enlarge</span>
+                                    <span class="text-white text-xs font-medium">Open in new tab</span>
                                 </div>
                             </div>
                             <div class="screenshot-meta">
@@ -92,7 +90,7 @@
                                     @endif
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
 
@@ -107,19 +105,6 @@
                     </div>
                 </div>
             @endif
-        </div>
-
-        <!-- Lightbox Modal -->
-        <div class="modal-backdrop" :class="{ 'open': modalOpen }" @click="modalOpen = false"
-            @keydown.escape.window="modalOpen = false" x-cloak>
-            <button @click="modalOpen = false" class="modal-close">
-                <svg class="icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <div class="modal-content" @click.stop>
-                <img :src="modalImage" alt="Screenshot">
-            </div>
         </div>
     </div>
 </x-app-layout>

@@ -1419,10 +1419,6 @@ ol {
     inset: 0;
     background: rgba(0, 0, 0, 0.9);
     z-index: var(--z-modal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-md);
     opacity: 0;
     visibility: hidden;
     transition: all var(--transition-base);
@@ -1433,8 +1429,17 @@ ol {
     visibility: visible;
 }
 
-.modal-close {
+.modal-scroll-wrapper {
     position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    padding: var(--spacing-xl);
+    display: flex;
+    justify-content: center;
+}
+
+.modal-close {
+    position: fixed;
     top: var(--spacing-lg);
     right: var(--spacing-lg);
     padding: var(--spacing-md);
@@ -1442,6 +1447,7 @@ ol {
     border-radius: var(--radius-xl);
     color: white;
     transition: background var(--transition-base);
+    z-index: calc(var(--z-modal) + 1);
 }
 
 .modal-close:hover {
@@ -1451,6 +1457,7 @@ ol {
 .modal-content {
     max-width: 56rem;
     width: 100%;
+    height: fit-content;
     background: var(--color-bg-primary);
     border-radius: var(--radius-2xl);
     padding: var(--spacing-sm);
@@ -1465,7 +1472,31 @@ ol {
 
 .modal-content img {
     width: 100%;
+    height: auto;
+    display: block;
     border-radius: var(--radius-xl);
+}
+
+/* Modal responsive styles */
+@media (max-width: 768px) {
+    .modal-scroll-wrapper {
+        padding: var(--spacing-md);
+    }
+
+    .modal-content {
+        border-radius: var(--radius-lg);
+        padding: var(--spacing-xs);
+    }
+
+    .modal-content img {
+        border-radius: var(--radius-md);
+    }
+
+    .modal-close {
+        top: var(--spacing-md);
+        right: var(--spacing-md);
+        padding: var(--spacing-sm);
+    }
 }
 
 /* =====================================
