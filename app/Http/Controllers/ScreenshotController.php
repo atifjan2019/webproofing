@@ -73,4 +73,37 @@ class ScreenshotController extends Controller
 
         return back()->with('success', 'Screenshot deleted.');
     }
+
+    /**
+     * Proxy the screenshot image to avoid Mixed Content issues.
+     */
+    public function image(Site $site, SiteScreenshot $screenshot)
+    {
+        $this->authorize('view', $site);
+
+        if ($screenshot->site_id !== $site->id) {
+            abort(404);
+        }
+
+        if (!$screenshot->image_path) {
+            abort(404);
+        }
+
+        $base = rtrim(config('services.screenshot.base'), '/');
+        $token = config('services.screenshot.image_token');
+        $url = "{$base}/image/{$screenshot->image_path}?token={$token}";
+
+        try {
+            $content = file_get_contents($url);
+            if ($content === false) {
+                abort(404);
+            }
+
+            return response($content)
+                ->header('Content-Type', 'image/png')
+                ->header('Cache-Control', 'public, max-age=86400');
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
 }

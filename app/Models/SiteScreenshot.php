@@ -67,9 +67,11 @@ class SiteScreenshot extends Model
     public function getImageSrcAttribute()
     {
         if ($this->image_path) {
-            $base = rtrim(config('services.screenshot.base'), '/');
-            $token = config('services.screenshot.image_token');
-            return "{$base}/image/{$this->image_path}?token={$token}";
+            // Use the local proxy route to avoid Mixed Content (HTTP vs HTTPS)
+            return route('sites.screenshots.image', [
+                'site' => $this->site_id,
+                'screenshot' => $this->id
+            ]);
         }
 
         return $this->image_url;

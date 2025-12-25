@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/sites/{site}/screenshots', [ScreenshotController::class, 'index'])->name('sites.screenshots');
     Route::post('/sites/{site}/screenshots', [ScreenshotController::class, 'capture'])->name('sites.screenshots.capture');
     Route::delete('/sites/{site}/screenshots/{screenshot}', [ScreenshotController::class, 'destroy'])->name('sites.screenshots.destroy');
+    Route::get('/sites/{site}/screenshots/{screenshot}/image', [ScreenshotController::class, 'image'])->name('sites.screenshots.image');
 
     // Analytics routes
     Route::get('/sites/{site}/analytics', [App\Http\Controllers\SiteAnalyticsController::class, 'show'])->name('sites.analytics');
