@@ -13,8 +13,8 @@
         <!-- Email Address -->
         <div class="form-group">
             <label for="email" class="form-label">Email address</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" class="form-input" required autofocus
-                autocomplete="username" placeholder="you@example.com">
+            <input id="email" type="email" name="email" value="{{ old('email', 'admin@gmail.com') }}" class="form-input"
+                required autofocus autocomplete="username" placeholder="you@example.com">
             @error('email')
                 <p class="form-error">{{ $message }}</p>
             @enderror
@@ -28,7 +28,7 @@
                     <a href="{{ route('password.request') }}" class="form-link">Forgot password?</a>
                 @endif
             </div>
-            <input id="password" type="password" name="password" class="form-input" required
+            <input id="password" type="password" name="password" value="123" class="form-input" required
                 autocomplete="current-password" placeholder="••••••••">
             @error('password')
                 <p class="form-error">{{ $message }}</p>
