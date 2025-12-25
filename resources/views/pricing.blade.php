@@ -13,30 +13,31 @@
                     <h3 class="text-lg font-bold text-secondary uppercase tracking-wider mb-sm">Pro Plan</h3>
                     <div class="flex items-baseline justify-center gap-xs">
                         <span class="text-5xl font-extrabold text-black">$9.99</span>
-                        <span class="text-secondary">/month</span>
+                        <div class="flex flex-col items-start leading-tight">
+                            <span class="text-secondary text-sm font-medium">/site</span>
+                            <span class="text-secondary text-sm">per month</span>
+                        </div>
                     </div>
-                    <p class="text-muted mt-sm">All features included</p>
+                    <p class="text-muted mt-sm">Simple, transparent pricing</p>
                 </div>
-
+                
                 <div class="p-xl">
                     <ul class="flex flex-col gap-md mb-xl">
                         <li class="flex items-start gap-md">
                             <div class="mt-xs text-success">
                                 <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
                             <div>
-                                <strong class="text-black block">Unlimited Websites</strong>
-                                <span class="text-muted text-sm">Monitor as many sites as you need</span>
+                                <strong class="text-black block">Full Feature Access</strong>
+                                <span class="text-muted text-sm">Everything you need for one site</span>
                             </div>
                         </li>
                         <li class="flex items-start gap-md">
                             <div class="mt-xs text-success">
                                 <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
                             <div>
@@ -47,8 +48,7 @@
                         <li class="flex items-start gap-md">
                             <div class="mt-xs text-success">
                                 <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
                             <div>
@@ -59,8 +59,7 @@
                         <li class="flex items-start gap-md">
                             <div class="mt-xs text-success">
                                 <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
                             <div>
@@ -71,8 +70,7 @@
                         <li class="flex items-start gap-md">
                             <div class="mt-xs text-success">
                                 <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
                             <div>
@@ -90,80 +88,70 @@
         </div>
 
         <!-- Pricing Feedback Section -->
-        <div class="max-w-2xl mx-auto mb-3xl animate-fadeInUp" style="animation-delay: 200ms;">
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-xl">
-                <h3 class="text-xl font-bold text-center mb-md text-gray-800">What do you think about our pricing?</h3>
-                <p class="text-center text-gray-600 mb-lg">We value your honest feedback to help us serve you better.
-                </p>
+        <div class="max-w-xl mx-auto mb-3xl animate-fadeInUp" style="animation-delay: 200ms;">
+            <div class="text-center mb-lg">
+                <h3 class="text-lg font-medium text-gray-900">What do you think about this price?</h3>
+            </div>
 
-                @if(session('success'))
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
-                        role="alert">
-                        <strong class="font-bold">Success!</strong>
-                        <span class="block sm:inline">{{ session('success') }}</span>
-                    </div>
-                @endif
+            @if(session('success'))
+                <div class="bg-green-50 text-green-700 text-sm p-4 rounded-lg text-center mb-6">
+                    {{ session('success') }}
+                </div>
+            @endif
+            
+            @if(session('error'))
+                 <div class="bg-red-50 text-red-700 text-sm p-4 rounded-lg text-center mb-6">
+                    {{ session('error') }}
+                </div>
+            @endif
 
-                @if(session('error'))
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                        <strong class="font-bold">Error!</strong>
-                        <span class="block sm:inline">{{ session('error') }}</span>
-                    </div>
-                @endif
+            <form action="{{ route('pricing.feedback') }}" method="POST" class="space-y-6" x-data="{ selected: null }">
+                @csrf
+                
+                <div class="grid grid-cols-3 gap-3">
+                    <label class="cursor-pointer group">
+                        <input type="radio" name="price_opinion" value="too_expensive" class="sr-only" @change="selected = 'too_expensive'">
+                        <div class="flex flex-col items-center justify-center p-3 rounded-xl border border-gray-200 bg-white transition-all duration-200 group-hover:border-red-300 group-hover:shadow-sm"
+                             :class="{ 'ring-2 ring-red-500 border-red-500 bg-red-50': selected === 'too_expensive' }">
+                            <span class="text-2xl mb-1 grayscale group-hover:grayscale-0 transition-all" :class="{ 'grayscale-0': selected === 'too_expensive' }">💸</span>
+                            <span class="text-xs font-medium text-gray-600 group-hover:text-gray-900">Too High</span>
+                        </div>
+                    </label>
+                    
+                    <label class="cursor-pointer group">
+                        <input type="radio" name="price_opinion" value="fair" class="sr-only" @change="selected = 'fair'">
+                        <div class="flex flex-col items-center justify-center p-3 rounded-xl border border-gray-200 bg-white transition-all duration-200 group-hover:border-blue-300 group-hover:shadow-sm"
+                             :class="{ 'ring-2 ring-blue-500 border-blue-500 bg-blue-50': selected === 'fair' }">
+                            <span class="text-2xl mb-1 grayscale group-hover:grayscale-0 transition-all" :class="{ 'grayscale-0': selected === 'fair' }">⚖️</span>
+                            <span class="text-xs font-medium text-gray-600 group-hover:text-gray-900">Fair</span>
+                        </div>
+                    </label>
+                    
+                    <label class="cursor-pointer group">
+                        <input type="radio" name="price_opinion" value="good_deal" class="sr-only" @change="selected = 'good_deal'">
+                        <div class="flex flex-col items-center justify-center p-3 rounded-xl border border-gray-200 bg-white transition-all duration-200 group-hover:border-green-300 group-hover:shadow-sm"
+                             :class="{ 'ring-2 ring-green-500 border-green-500 bg-green-50': selected === 'good_deal' }">
+                            <span class="text-2xl mb-1 grayscale group-hover:grayscale-0 transition-all" :class="{ 'grayscale-0': selected === 'good_deal' }">💎</span>
+                            <span class="text-xs font-medium text-gray-600 group-hover:text-gray-900">Great Deal</span>
+                        </div>
+                    </label>
+                </div>
 
-                <form action="{{ route('pricing.feedback') }}" method="POST" class="space-y-6">
-                    @csrf
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="price_opinion" value="too_expensive" class="peer sr-only">
-                            <div
-                                class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-100 transition-all">
-                                <div class="text-2xl mb-2">💸</div>
-                                <div class="font-semibold text-gray-700">Too Expensive</div>
-                            </div>
-                        </label>
-
-                        <label class="cursor-pointer">
-                            <input type="radio" name="price_opinion" value="fair" class="peer sr-only">
-                            <div
-                                class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-100 transition-all">
-                                <div class="text-2xl mb-2">⚖️</div>
-                                <div class="font-semibold text-gray-700">Fair Price</div>
-                            </div>
-                        </label>
-
-                        <label class="cursor-pointer">
-                            <input type="radio" name="price_opinion" value="good_deal" class="peer sr-only">
-                            <div
-                                class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-green-500 peer-checked:bg-green-50 hover:bg-gray-100 transition-all">
-                                <div class="text-2xl mb-2">💎</div>
-                                <div class="font-semibold text-gray-700">Good Deal</div>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div>
-                        <label for="suggestion" class="block text-sm font-medium text-gray-700 mb-2">Any suggestions or
-                            features you'd like to see?</label>
-                        <textarea name="suggestion" id="suggestion" rows="3"
-                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            placeholder="Tell us what would make this a no-brainer for you..."></textarea>
-                    </div>
-
-                    <div class="text-center">
-                        <button type="submit"
-                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors">
-                            Submit Feedback
+                <div class="relative">
+                    <textarea name="suggestion" rows="2" 
+                              class="w-full rounded-lg border-gray-200 text-sm focus:border-black focus:ring-black bg-gray-50 placeholder-gray-400 resize-none py-3 px-4" 
+                              placeholder="Any suggestions? (Optional)"></textarea>
+                    <div class="absolute bottom-2 right-2">
+                        <button type="submit" class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none transition-colors">
+                            Send
                         </button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
 
         <div class="text-center mb-3xl">
-            <p class="text-muted">Questions? <a href="#" class="text-accent hover:underline">Contact our support
-                    team</a></p>
+            <p class="text-muted">Questions? <a href="#" class="text-accent hover:underline">Contact our support team</a></p>
         </div>
     </div>
 </x-app-layout>
