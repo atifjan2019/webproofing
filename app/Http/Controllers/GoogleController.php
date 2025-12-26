@@ -29,6 +29,14 @@ class GoogleController extends Controller
         $state = Str::random(40);
         session(['google_oauth_state' => $state]);
 
+        // Store the intended redirect URL (where to go after connecting)
+        if ($request->has('redirect_to')) {
+            session(['google_oauth_redirect' => $request->input('redirect_to')]);
+        } elseif ($request->headers->has('referer')) {
+            // Use the referer URL if no explicit redirect specified
+            session(['google_oauth_redirect' => $request->headers->get('referer')]);
+        }
+
         $authUrl = $this->tokenManager->getAuthorizationUrl($state);
 
         return redirect()->away($authUrl);
@@ -44,6 +52,9 @@ class GoogleController extends Controller
         $storedState = session('google_oauth_state');
         $returnedState = $request->input('state');
 
+        // Get stored redirect URL before clearing session
+        $redirectUrl = session('google_oauth_redirect');
+
         if (!$storedState || $storedState !== $returnedState) {
             Log::warning('Google OAuth state mismatch', [
                 'user_id' => Auth::id(),
@@ -54,6 +65,7 @@ class GoogleController extends Controller
 
         // Clear state from session
         session()->forget('google_oauth_state');
+        session()->forget('google_oauth_redirect');
 
         // Check for error
         if ($request->has('error')) {
@@ -61,24 +73,24 @@ class GoogleController extends Controller
                 'user_id' => Auth::id(),
                 'error' => $request->input('error'),
             ]);
-            return redirect()->route('sites.index')
-                ->with('error', 'Google authentication was cancelled or failed.');
+            $errorRedirect = $redirectUrl ? redirect($redirectUrl) : redirect()->route('sites.index');
+            return $errorRedirect->with('error', 'Google authentication was cancelled or failed.');
         }
 
         // Get authorization code
         $code = $request->input('code');
 
         if (!$code) {
-            return redirect()->route('sites.index')
-                ->with('error', 'No authorization code received from Google.');
+            $errorRedirect = $redirectUrl ? redirect($redirectUrl) : redirect()->route('sites.index');
+            return $errorRedirect->with('error', 'No authorization code received from Google.');
         }
 
         // Exchange code for tokens
         $tokens = $this->tokenManager->exchangeCodeForTokens($code);
 
         if (!$tokens) {
-            return redirect()->route('sites.index')
-                ->with('error', 'Failed to get tokens from Google. Please try again.');
+            $errorRedirect = $redirectUrl ? redirect($redirectUrl) : redirect()->route('sites.index');
+            return $errorRedirect->with('error', 'Failed to get tokens from Google. Please try again.');
         }
 
         // Get user info from Google (optional - we can still proceed without it)
@@ -112,8 +124,9 @@ class GoogleController extends Controller
             $message .= ' Warning: No refresh token received. You may need to reconnect later.';
         }
 
-        return redirect()->route('sites.index')
-            ->with('success', $message);
+        // Redirect back to original page or sites index
+        $successRedirect = $redirectUrl ? redirect($redirectUrl) : redirect()->route('sites.index');
+        return $successRedirect->with('success', $message);
     }
 
     /**

@@ -79,10 +79,12 @@ class GoogleSearchConsoleService
             $encodedSiteUrl = urlencode($siteUrl);
 
             $response = Http::withToken($accessToken)
+                ->timeout(30)
                 ->post(config('google.gsc_api_base') . "/sites/{$encodedSiteUrl}/searchAnalytics/query", [
                     'startDate' => $startDate,
                     'endDate' => $endDate,
                     'dimensions' => [], // No dimensions = aggregate totals
+                    'dataState' => 'all', // Include fresh/preliminary data
                 ]);
 
             if (!$response->successful()) {
@@ -96,9 +98,26 @@ class GoogleSearchConsoleService
             }
 
             $data = $response->json();
+
+            // Debug logging
+            Log::info('GSC API Response', [
+                'user_id' => $user->id,
+                'site_url' => $siteUrl,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'has_rows' => isset($data['rows']),
+                'row_count' => count($data['rows'] ?? []),
+                'raw_data' => $data,
+            ]);
+
             $row = $data['rows'][0] ?? null;
 
             if (!$row) {
+                Log::info('GSC: No rows returned', [
+                    'site_url' => $siteUrl,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                ]);
                 return [
                     'clicks' => 0,
                     'impressions' => 0,
@@ -138,10 +157,12 @@ class GoogleSearchConsoleService
             $encodedSiteUrl = urlencode($siteUrl);
 
             $response = Http::withToken($accessToken)
+                ->timeout(30)
                 ->post(config('google.gsc_api_base') . "/sites/{$encodedSiteUrl}/searchAnalytics/query", [
                     'startDate' => $startDate,
                     'endDate' => $endDate,
                     'dimensions' => ['date'],
+                    'dataState' => 'all', // Include fresh/preliminary data
                 ]);
 
             if (!$response->successful()) {
@@ -204,6 +225,7 @@ class GoogleSearchConsoleService
                     'endDate' => $endDate,
                     'dimensions' => ['query'],
                     'rowLimit' => $limit,
+                    'dataState' => 'all', // Include fresh/preliminary data
                 ]);
 
             if (!$response->successful()) {

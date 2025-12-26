@@ -91,51 +91,55 @@ class SiteAnalyticsService
 
     private function calculateDates(string $period): array
     {
-        // GSC data has a 24-48 hour delay
-        // We offset by 1 day for shorter periods to show more recent available data
+        // Show all available data including today
+        // Note: Today's GSC data may be incomplete or zero due to processing delays
 
         $end = now();
         $start = now();
 
         switch ($period) {
+            case '24h':
+                // "Last 24 hours" in GSC crosses days, so we need yesterday + today
+                $start = now()->subDay();
+                $end = now();
+                break;
             case 'today':
-                // Show yesterday's data since today is often incomplete
+                // Just today
+                $start = now();
+                $end = now();
+                break;
+            case 'yesterday':
                 $start = now()->subDay();
                 $end = now()->subDay();
                 break;
-            case 'yesterday':
-                $start = now()->subDays(2);
-                $end = now()->subDays(2);
-                break;
             case '2d':
-                $start = now()->subDays(2);
-                $end = now()->subDay();
+                $start = now()->subDay();
+                $end = now();
                 break;
             case '3d':
-                $start = now()->subDays(3);
-                $end = now()->subDay();
+                $start = now()->subDays(2);
+                $end = now();
                 break;
             case '7d':
-                // Last 7 days ending yesterday
-                $start = now()->subDays(7);
-                $end = now()->subDay();
+                $start = now()->subDays(6);
+                $end = now();
                 break;
             case '28d':
-                $start = now()->subDays(28);
-                $end = now()->subDay();
+                $start = now()->subDays(27);
+                $end = now();
                 break;
             case '30d':
-                $start = now()->subDays(30);
-                $end = now()->subDay();
+                $start = now()->subDays(29);
+                $end = now();
                 break;
             case '90d':
-                $start = now()->subDays(90);
-                $end = now()->subDay();
+                $start = now()->subDays(89);
+                $end = now();
                 break;
             default:
                 // Default to 7 days
-                $start = now()->subDays(7);
-                $end = now()->subDay();
+                $start = now()->subDays(6);
+                $end = now();
                 break;
         }
 

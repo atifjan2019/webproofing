@@ -18,6 +18,15 @@
                 x-init="init()">
                 <!-- Period Filter - Segmented Control -->
                 <div class="period-filter-group">
+                    <button type="button" @click="setPeriod('24h')" class="period-filter-btn"
+                        :class="currentPeriod === '24h' ? 'active' : ''">
+                        <svg x-show="currentPeriod === '24h'" class="filter-check" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>24h</span>
+                    </button>
                     <button type="button" @click="setPeriod('7d')" class="period-filter-btn"
                         :class="currentPeriod === '7d' ? 'active' : ''">
                         <svg x-show="currentPeriod === '7d'" class="filter-check" fill="none" stroke="currentColor"
@@ -62,19 +71,7 @@
 
         @include('sites.partials.nav')
 
-        <!-- Data Delay Notice -->
-        <div class="info-notice mt-lg">
-            <svg class="info-notice-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div class="info-notice-content">
-                <p class="info-notice-text">
-                    <strong>Note:</strong> Search Console data may be delayed by up to 48 hours. Analytics data is
-                    typically available within a few hours. Data shown excludes the last 2 days to ensure accuracy.
-                </p>
-            </div>
-        </div>
+
 
         <!-- Analytics Content -->
         <div class="mt-xl" x-data="analyticsDashboard()" @filter-changed.window="fetchData($event.detail)">
@@ -311,6 +308,7 @@
                 currentPeriod: '7d',
                 loading: false, // shared state? No, this is separate x-data.
                 periods: [
+                    { value: '24h', label: '24 Hours' },
                     { value: 'today', label: 'Today' },
                     { value: 'yesterday', label: 'Yesterday' },
                     { value: '2d', label: 'Last 2 Days' },
