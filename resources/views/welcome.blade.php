@@ -928,7 +928,7 @@
                 padding: 3rem 0;
             }
 
-            .cta > div {
+            .cta>div {
                 padding: 2.5rem 1.5rem !important;
                 border-radius: 1.25rem !important;
             }
@@ -1342,20 +1342,6 @@
                 <p>Features we're actively building based on user feedback.</p>
             </div>
             <div class="feature-grid">
-                <div class="feature-card" style="position: relative; opacity: 0.85; border-style: dashed;">
-                    <span
-                        style="position: absolute; top: 1rem; right: 1rem; padding: 0.25rem 0.75rem; background: #f3f4f6; border-radius: 2rem; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">Coming
-                        Soon</span>
-                    <div class="feature-icon" style="background: #f3f4f6;">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #6b7280;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <h3>Website Speed Test</h3>
-                    <p>PageSpeed-style performance insights. Monitor loading speed, Core Web Vitals, and get actionable
-                        recommendations.</p>
-                </div>
                 <div class="feature-card" style="position: relative; opacity: 0.85; border-style: dashed;">
                     <span
                         style="position: absolute; top: 1rem; right: 1rem; padding: 0.25rem 0.75rem; background: #f3f4f6; border-radius: 2rem; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">Coming

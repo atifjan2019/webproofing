@@ -2116,6 +2116,30 @@ ol {
     background: var(--color-danger-light);
 }
 
+.site-quick-action.warning {
+    color: #f59e0b;
+    animation: pulse-warning 2s ease-in-out infinite;
+}
+
+.site-quick-action.warning:hover {
+    color: #d97706;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+@keyframes pulse-warning {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.site-quick-action.success {
+    color: var(--color-success);
+}
+
+.site-quick-action.success:hover {
+    color: #059669;
+    background: var(--color-success-light);
+}
+
 .site-delete-form {
     margin-left: auto;
 }
