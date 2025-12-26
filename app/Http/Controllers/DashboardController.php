@@ -19,11 +19,12 @@ class DashboardController extends Controller
     /**
      * Show the main dashboard.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
-        $sites = $user->sites()
+        // Get all sites for stats calculation (not paginated)
+        $allSites = $user->sites()
             ->with('trialDomain')
             ->orderBy('created_at', 'desc')
             ->get()
@@ -32,24 +33,41 @@ class DashboardController extends Controller
                 return $site;
             });
 
-        // Calculate stats
+        // Calculate stats from all sites
         $stats = [
-            'total' => $sites->count(),
-            'active' => $sites->filter(fn($s) => $s->trial_status['can_monitor'])->count(),
-            'paused' => $sites->filter(fn($s) => !$s->trial_status['can_monitor'])->count(),
-            'on_trial' => $sites->filter(fn($s) => $s->trial_status['status'] === 'trial')->count(),
-            'expired' => $sites->filter(fn($s) => $s->trial_status['status'] === 'expired')->count(),
+            'total' => $allSites->count(),
+            'active' => $allSites->filter(fn($s) => $s->trial_status['can_monitor'])->count(),
+            'paused' => $allSites->filter(fn($s) => !$s->trial_status['can_monitor'])->count(),
+            'on_trial' => $allSites->filter(fn($s) => $s->trial_status['status'] === 'trial')->count(),
+            'expired' => $allSites->filter(fn($s) => $s->trial_status['status'] === 'expired')->count(),
         ];
 
         // Sites expiring soon (within 3 days)
-        $expiringSoon = $sites->filter(function ($site) {
+        $expiringSoon = $allSites->filter(function ($site) {
             return $site->trial_status['status'] === 'trial'
                 && $site->trial_status['remaining_days'] <= 3;
         });
 
-        // Recent sites
-        $recentSites = $sites->take(5);
+        // Paginated sites for display (6 per page)
+        $paginatedSites = $user->sites()
+            ->with('trialDomain')
+            ->orderBy('created_at', 'desc')
+            ->paginate(6);
 
-        return view('dashboard', compact('stats', 'sites', 'expiringSoon', 'recentSites'));
+        // Add trial status to paginated sites
+        $paginatedSites->getCollection()->transform(function ($site) {
+            $site->trial_status = $this->trialService->getSiteStatus($site);
+            return $site;
+        });
+
+        // Recent sites (for quick access)
+        $recentSites = $allSites->take(5);
+
+        return view('dashboard', [
+            'stats' => $stats,
+            'sites' => $paginatedSites,
+            'expiringSoon' => $expiringSoon,
+            'recentSites' => $recentSites,
+        ]);
     }
 }

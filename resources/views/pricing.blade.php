@@ -614,7 +614,7 @@
                     </div>
                 </div>
 
-                <a href="#" class="cta-button">
+                <a href="{{ route('register') }}" class="cta-button">
                     Get Started Now
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -755,7 +755,53 @@
     </div>
 
     <!-- Bottom CTA -->
-    <div class="bottom-cta">
-        <p>Have questions? <a href="#">Contact our support team</a></p>
+    <div class="bottom-cta" style="padding: 4rem 1rem;">
+        <p>Have questions? <a href="mailto:atifjan2019@gmail.com"
+                style="color: var(--color-accent); font-weight: 600;">Contact our support team</a></p>
     </div>
+
+    <style>
+        @media (max-width: 640px) {
+            .pricing-hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .pricing-hero p {
+                font-size: 1.1rem;
+            }
+
+            .pricing-card-wrapper {
+                margin-top: -2rem;
+                padding: 0 1rem;
+            }
+
+            .pricing-card {
+                border-radius: 1rem;
+            }
+
+            .card-header {
+                padding: 2rem 1rem;
+            }
+
+            .price-amount {
+                font-size: 4rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .opinion-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .faq-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </x-app-layout>

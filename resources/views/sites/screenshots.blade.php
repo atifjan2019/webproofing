@@ -16,7 +16,7 @@
             @if($trialStatus['can_monitor'])
                 <form action="{{ route('sites.screenshots.capture', $site) }}" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary btn-full-mobile">
                         <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -54,7 +54,7 @@
             </div>
         @endif
 
-        <div class="mt-xl">
+        <div class="mt-xl" x-data="{ selectedImage: null }">
             @if ($screenshots->isEmpty())
                 <!-- Empty State -->
                 <div class="card">
@@ -74,11 +74,12 @@
                 <!-- Screenshots Grid -->
                 <div class="grid grid-cols-2 sm-grid-cols-4 lg-grid-cols-7 gap-md">
                     @foreach ($screenshots as $index => $screenshot)
-                        <a href="{{ $screenshot->image_src }}" target="_blank" class="screenshot-card animate-fadeInUp" style="animation-delay: {{ $index * 30 }}ms">
+                        <div class="screenshot-card animate-fadeInUp" style="animation-delay: {{ $index * 30 }}ms"
+                            @click="selectedImage = '{{ $screenshot->image_src }}'">
                             <div class="screenshot-image">
-                                <img src="{{ $screenshot->image_src }}" alt="Screenshot">
+                                <img src="{{ $screenshot->image_src }}" alt="Screenshot" loading="lazy">
                                 <div class="screenshot-overlay">
-                                    <span class="text-white text-xs font-medium">Open in new tab</span>
+                                    <span class="text-white text-xs font-medium">Tap to view</span>
                                 </div>
                             </div>
                             <div class="screenshot-meta">
@@ -90,8 +91,21 @@
                                     @endif
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     @endforeach
+                </div>
+
+                <!-- Screenshot Modal -->
+                <div class="screenshot-modal" :class="{ 'open': selectedImage }" @click.self="selectedImage = null">
+                    <button class="screenshot-modal-close" @click="selectedImage = null">
+                        <svg class="icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <div class="screenshot-modal-content">
+                        <img :src="selectedImage" alt="Full screenshot">
+                    </div>
                 </div>
 
                 <!-- Retention Notice -->

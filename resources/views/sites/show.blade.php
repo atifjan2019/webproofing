@@ -33,9 +33,22 @@
         <!-- Analytics Section -->
         @if($site->hasGa4() || $site->hasGsc())
             <div class="mt-xl mb-xl" x-data="analyticsData()" x-init="fetchData()">
-                <div class="flex items-center justify-between mb-lg">
-                    <h2 class="text-xl font-bold text-black">Analytics Overview</h2>
-                    <span class="text-sm text-muted">Last 28 days</span>
+                <div class="flex items-center justify-between mb-lg mobile-stack-header">
+                    <div class="flex items-center gap-sm">
+                        <h2 class="text-xl font-bold text-black">Analytics Overview</h2>
+                        <span class="tooltip-container">
+                            <span class="tooltip-trigger">?</span>
+                            <span class="tooltip-content tooltip-wide">Data may be delayed by up to 48 hours for Search
+                                Console. Analytics data is typically near real-time.</span>
+                        </span>
+                    </div>
+                    <span class="data-delay-notice">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Last 7 days (available data)
+                    </span>
                 </div>
 
                 <!-- Loading State -->
@@ -422,7 +435,7 @@
 
                 async fetchData() {
                     try {
-                        const response = await fetch('{{ route("sites.metrics", $site) }}?period=28d');
+                        const response = await fetch('{{ route("sites.metrics", $site) }}?period=7d');
                         if (!response.ok) {
                             throw new Error('Failed to fetch analytics data');
                         }

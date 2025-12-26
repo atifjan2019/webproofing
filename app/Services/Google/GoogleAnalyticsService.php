@@ -17,40 +17,87 @@ class GoogleAnalyticsService
 
     /**
      * List all GA4 properties accessible by the user.
+     * Improved to handle viewer-only access and different account setups.
      */
     public function listProperties(User $user): ?array
     {
         $accessToken = $this->tokenManager->getValidAccessToken($user);
 
         if (!$accessToken) {
+            Log::warning('GA4 listProperties: No valid access token', ['user_id' => $user->id]);
             return null;
         }
 
         try {
+            // Try fetching via accountSummaries (works for most cases)
             $response = Http::withToken($accessToken)
                 ->get(config('google.ga4_admin_api_base') . '/accountSummaries');
+
+            Log::info('GA4 listProperties response', [
+                'user_id' => $user->id,
+                'status' => $response->status(),
+                'has_body' => !empty($response->body()),
+            ]);
 
             if (!$response->successful()) {
                 Log::error('Failed to list GA4 properties', [
                     'user_id' => $user->id,
                     'status' => $response->status(),
-                    'body' => $response->body(),
+                    'error_code' => $response->json('error.code'),
+                    'error_message' => $response->json('error.message'),
+                    'body' => substr($response->body(), 0, 500),
                 ]);
+
+                // Check for specific error types
+                $errorCode = $response->json('error.code');
+                if ($errorCode === 403) {
+                    Log::warning('GA4: Permission denied - user may need to reconnect with correct scopes', [
+                        'user_id' => $user->id
+                    ]);
+                }
+
                 return null;
             }
 
             $data = $response->json();
             $properties = [];
 
+            // Log the raw response for debugging
+            Log::debug('GA4 accountSummaries data', [
+                'user_id' => $user->id,
+                'account_count' => count($data['accountSummaries'] ?? []),
+                'raw_accounts' => array_map(fn($a) => $a['displayName'] ?? 'Unknown', $data['accountSummaries'] ?? []),
+            ]);
+
             // Extract properties from account summaries
             foreach ($data['accountSummaries'] ?? [] as $account) {
+                $accountName = $account['displayName'] ?? 'Unknown Account';
+
                 foreach ($account['propertySummaries'] ?? [] as $property) {
+                    // Property format is "properties/123456789"
+                    $propertyId = str_replace('properties/', '', $property['property']);
+
                     $properties[] = [
-                        'property_id' => str_replace('properties/', '', $property['property']),
-                        'property_name' => $property['displayName'] ?? 'Unknown',
-                        'account_name' => $account['displayName'] ?? 'Unknown Account',
+                        'property_id' => $propertyId,
+                        'property_name' => $property['displayName'] ?? 'Unknown Property',
+                        'account_name' => $accountName,
+                        'property_type' => $property['propertyType'] ?? 'PROPERTY_TYPE_UNSPECIFIED',
                     ];
                 }
+            }
+
+            Log::info('GA4 properties found', [
+                'user_id' => $user->id,
+                'count' => count($properties),
+                'properties' => array_map(fn($p) => $p['property_name'], $properties),
+            ]);
+
+            // If no properties found via accountSummaries, log helpful message
+            if (empty($properties)) {
+                Log::info('GA4: No properties found for user. Possible reasons: no GA4 properties, viewer access on different email, or Universal Analytics only.', [
+                    'user_id' => $user->id,
+                    'google_email' => $user->googleAccount?->email,
+                ]);
             }
 
             return $properties;
@@ -58,6 +105,7 @@ class GoogleAnalyticsService
             Log::error('Exception while listing GA4 properties', [
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
             return null;
         }
@@ -76,6 +124,7 @@ class GoogleAnalyticsService
         $accessToken = $this->tokenManager->getValidAccessToken($user);
 
         if (!$accessToken) {
+            Log::warning('GA4 fetchGa4Summary: No valid access token', ['user_id' => $user->id]);
             return null;
         }
 
@@ -99,8 +148,10 @@ class GoogleAnalyticsService
                 Log::error('Failed to fetch GA4 summary', [
                     'user_id' => $user->id,
                     'property_id' => $propertyId,
+                    'date_range' => [$startDate, $endDate],
                     'status' => $response->status(),
-                    'body' => $response->body(),
+                    'error' => $response->json('error.message'),
+                    'body' => substr($response->body(), 0, 500),
                 ]);
                 return null;
             }
@@ -109,6 +160,14 @@ class GoogleAnalyticsService
 
             // Parse the response
             $metrics = $data['rows'][0]['metricValues'] ?? [];
+
+            if (empty($metrics)) {
+                Log::info('GA4 summary: No data for date range', [
+                    'user_id' => $user->id,
+                    'property_id' => $propertyId,
+                    'date_range' => [$startDate, $endDate],
+                ]);
+            }
 
             return [
                 'users' => (int) ($metrics[0]['value'] ?? 0),
@@ -204,3 +263,4 @@ class GoogleAnalyticsService
         }
     }
 }
+

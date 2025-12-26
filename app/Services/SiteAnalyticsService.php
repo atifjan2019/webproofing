@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Google\GoogleAnalyticsService;
 use App\Services\Google\GoogleSearchConsoleService;
 
+
 class SiteAnalyticsService
 {
     public function __construct(
@@ -90,36 +91,51 @@ class SiteAnalyticsService
 
     private function calculateDates(string $period): array
     {
+        // GSC data has a 24-48 hour delay
+        // We offset by 1 day for shorter periods to show more recent available data
+
         $end = now();
         $start = now();
 
         switch ($period) {
             case 'today':
-                break;
-            case 'yesterday':
+                // Show yesterday's data since today is often incomplete
                 $start = now()->subDay();
                 $end = now()->subDay();
                 break;
+            case 'yesterday':
+                $start = now()->subDays(2);
+                $end = now()->subDays(2);
+                break;
             case '2d':
-                $start = now()->subDays(1);
+                $start = now()->subDays(2);
+                $end = now()->subDay();
                 break;
             case '3d':
-                $start = now()->subDays(2);
+                $start = now()->subDays(3);
+                $end = now()->subDay();
                 break;
             case '7d':
-                $start = now()->subDays(6);
+                // Last 7 days ending yesterday
+                $start = now()->subDays(7);
+                $end = now()->subDay();
                 break;
             case '28d':
-                $start = now()->subDays(27);
+                $start = now()->subDays(28);
+                $end = now()->subDay();
                 break;
             case '30d':
-                $start = now()->subDays(29);
+                $start = now()->subDays(30);
+                $end = now()->subDay();
                 break;
             case '90d':
-                $start = now()->subDays(89);
+                $start = now()->subDays(90);
+                $end = now()->subDay();
                 break;
             default:
-                $start = now()->subDays(29);
+                // Default to 7 days
+                $start = now()->subDays(7);
+                $end = now()->subDay();
                 break;
         }
 

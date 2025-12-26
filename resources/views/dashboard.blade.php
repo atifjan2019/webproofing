@@ -88,18 +88,18 @@
         <!-- Recent Sites Section -->
         <div>
             <div class="flex items-center justify-between mb-lg">
-                <h2 class="text-2xl font-bold text-black">Recent Websites</h2>
-                @if($recentSites->isNotEmpty())
-                    <a href="{{ route('sites.index') }}" class="flex items-center gap-sm text-accent font-medium">
-                        View All
+                <h2 class="text-2xl font-bold text-black">Your Websites</h2>
+                @if($sites->isNotEmpty())
+                    <a href="{{ route('sites.create') }}" class="btn btn-primary btn-sm">
                         <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
+                        Add Site
                     </a>
                 @endif
             </div>
 
-            @if($recentSites->isEmpty())
+            @if($sites->isEmpty())
                 <!-- Empty State -->
                 <div class="card">
                     <div class="empty-state">
@@ -124,7 +124,7 @@
             @else
                 <!-- Sites List -->
                 <div class="flex flex-col gap-md">
-                    @foreach($recentSites as $index => $site)
+                    @foreach($sites as $index => $site)
                         <a href="{{ route('sites.show', $site) }}" class="site-card animate-fadeInUp"
                             style="animation-delay: {{ $index * 50 }}ms;">
                             <div class="site-info">
@@ -157,7 +157,15 @@
                         </a>
                     @endforeach
                 </div>
+
+                <!-- Pagination -->
+                @if($sites->hasPages())
+                    <div class="mt-xl">
+                        {{ $sites->links() }}
+                    </div>
+                @endif
             @endif
         </div>
+
     </div>
 </x-app-layout>

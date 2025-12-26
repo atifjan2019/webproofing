@@ -66,11 +66,27 @@
                         <input type="hidden" name="ga4_property_name" id="ga4_property_name" value="{{ $site->ga4_property_name }}">
                     </div>
                 @else
-                    <div class="alert alert-info mb-0">
-                        <svg class="icon-md flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                        </svg>
-                        <span>No GA4 properties found. Make sure you have access to Google Analytics properties.</span>
+                    <div class="empty-state-explained">
+                        <div class="empty-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--color-text-muted);">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <h4>No GA4 properties found</h4>
+                        <p>We couldn't find any Google Analytics 4 properties for your connected account.</p>
+                        <ul class="empty-state-reasons">
+                            <li>You may only have Universal Analytics (UA) properties - only GA4 is supported</li>
+                            <li>You might have access via a different Google account</li>
+                            <li>You may have viewer-only access which requires direct property invitation</li>
+                        </ul>
+                        <div class="reconnect-actions" style="justify-content: center;">
+                            <a href="{{ route('google.connect') }}" class="btn-reconnect">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Reconnect Google Account
+                            </a>
+                        </div>
                     </div>
                 @endif
             </div>

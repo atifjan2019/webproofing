@@ -14,18 +14,10 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-md" x-data="dateFilter()" x-init="init()">
+            <div class="flex flex-wrap items-center justify-between gap-md mobile-stack-header" x-data="dateFilter()"
+                x-init="init()">
                 <!-- Period Filter - Segmented Control -->
                 <div class="period-filter-group">
-                    <button type="button" @click="setPeriod('today')" class="period-filter-btn"
-                        :class="currentPeriod === 'today' ? 'active' : ''">
-                        <svg x-show="currentPeriod === 'today'" class="filter-check" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                d="M5 13l4 4L19 7" />
-                        </svg>
-                        <span>24 hours</span>
-                    </button>
                     <button type="button" @click="setPeriod('7d')" class="period-filter-btn"
                         :class="currentPeriod === '7d' ? 'active' : ''">
                         <svg x-show="currentPeriod === '7d'" class="filter-check" fill="none" stroke="currentColor"
@@ -44,10 +36,19 @@
                         </svg>
                         <span>28 days</span>
                     </button>
+                    <button type="button" @click="setPeriod('90d')" class="period-filter-btn"
+                        :class="currentPeriod === '90d' ? 'active' : ''">
+                        <svg x-show="currentPeriod === '90d'" class="filter-check" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>3 months</span>
+                    </button>
                 </div>
 
                 <!-- Refresh Button -->
-                <button @click="refreshData" class="btn btn-primary" :disabled="loading">
+                <button @click="refreshData" class="btn btn-primary btn-full-mobile" :disabled="loading">
                     <svg class="icon-md" :class="{'animate-spin': loading}" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -60,6 +61,20 @@
         </div>
 
         @include('sites.partials.nav')
+
+        <!-- Data Delay Notice -->
+        <div class="info-notice mt-lg">
+            <svg class="info-notice-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="info-notice-content">
+                <p class="info-notice-text">
+                    <strong>Note:</strong> Search Console data may be delayed by up to 48 hours. Analytics data is
+                    typically available within a few hours. Data shown excludes the last 2 days to ensure accuracy.
+                </p>
+            </div>
+        </div>
 
         <!-- Analytics Content -->
         <div class="mt-xl" x-data="analyticsDashboard()" @filter-changed.window="fetchData($event.detail)">
@@ -179,7 +194,9 @@
                 <section class="card" x-show="dailyData && dailyData.length > 0">
                     <div class="card-body">
                         <h3 class="font-semibold text-black mb-lg">Last 7 Days Overview</h3>
-                        <div class="table-responsive">
+
+                        <!-- Desktop Table - Hidden on Mobile -->
+                        <div class="table-responsive hide-on-mobile">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -206,6 +223,45 @@
                                     </template>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Mobile Card Stack -->
+                        <div class="mobile-card-stack show-on-mobile" style="display: none;">
+                            <template x-for="row in getLast7DaysData()" :key="row.date + '-mobile'">
+                                <div class="mobile-stack-card">
+                                    <div class="mobile-stack-row"
+                                        style="border-bottom: none; padding-bottom: var(--spacing-sm);">
+                                        <span class="font-semibold text-black"
+                                            x-text="formatTableDate(row.date)"></span>
+                                    </div>
+                                    <div class="grid mobile-grid-2 gap-sm" style="margin-top: var(--spacing-sm);">
+                                        <div class="mobile-stack-row"
+                                            style="flex-direction: column; align-items: flex-start; gap: 2px;">
+                                            <span class="mobile-stack-label">Users</span>
+                                            <span class="mobile-stack-value"
+                                                x-text="formatNumber(row.ga_users || 0)"></span>
+                                        </div>
+                                        <div class="mobile-stack-row"
+                                            style="flex-direction: column; align-items: flex-start; gap: 2px;">
+                                            <span class="mobile-stack-label">Sessions</span>
+                                            <span class="mobile-stack-value"
+                                                x-text="formatNumber(row.ga_sessions || 0)"></span>
+                                        </div>
+                                        <div class="mobile-stack-row"
+                                            style="flex-direction: column; align-items: flex-start; gap: 2px;">
+                                            <span class="mobile-stack-label">Clicks</span>
+                                            <span class="mobile-stack-value"
+                                                x-text="formatNumber(row.gsc_clicks || 0)"></span>
+                                        </div>
+                                        <div class="mobile-stack-row"
+                                            style="flex-direction: column; align-items: flex-start; gap: 2px;">
+                                            <span class="mobile-stack-label">Impressions</span>
+                                            <span class="mobile-stack-value"
+                                                x-text="formatNumber(row.gsc_impressions || 0)"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </section>
@@ -252,7 +308,7 @@
     <script>
         function dateFilter() {
             return {
-                currentPeriod: '28d',
+                currentPeriod: '7d',
                 loading: false, // shared state? No, this is separate x-data.
                 periods: [
                     { value: 'today', label: 'Today' },
