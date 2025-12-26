@@ -16,12 +16,23 @@
         Screenshots
     </a>
 
-    <a href="{{ route('sites.analytics', $site) }}"
-        class="tab-link {{ request()->routeIs('sites.analytics') ? 'active' : '' }}">
+    @if(Auth::user()->googleAccount)
+        <a href="{{ route('sites.analytics', $site) }}"
+            class="tab-link {{ request()->routeIs('sites.analytics') ? 'active' : '' }}">
+            <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            Analytics
+        </a>
+    @endif
+
+    <!-- PageSpeed Tab -->
+    <a href="{{ route('sites.pagespeed', $site) }}"
+        class="tab-link {{ request()->routeIs('sites.pagespeed') ? 'active' : '' }}">
         <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
-        Analytics
+        Speed Test
     </a>
 
     <a href="{{ route('sites.google', $site) }}"

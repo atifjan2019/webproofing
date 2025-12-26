@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Site;
+use App\Services\Google\PageSpeedService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class SitePageSpeedController extends Controller
+{
+    public function show(Site $site)
+    {
+        if ($site->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Fetch latest metrics
+        $metrics = $site->pagespeedMetrics()
+            ->get()
+            ->keyBy('strategy');
+
+        return view('sites.pagespeed', [
+            'site' => $site,
+            'metrics' => $metrics,
+        ]);
+    }
+
+    public function analyze(Request $request, Site $site, PageSpeedService $pageSpeedService)
+    {
+        if ($site->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'strategy' => 'in:mobile,desktop',
+        ]);
+
+        $strategy = $request->input('strategy', 'mobile');
+
+        $url = $site->domain;
+        if (!str_starts_with($url, 'http')) {
+            $url = 'https://' . $url;
+        }
+
+        // Run analysis
+        $result = $pageSpeedService->analyze($url, $strategy);
+
+        if (!$result) {
+            return response()->json([
+                'error' => 'Failed to analyze metrics. Please check your API key and try again.',
+            ], 500);
+        }
+
+        // Store result
+        $site->pagespeedMetrics()->updateOrCreate(
+            ['strategy' => $strategy],
+            [
+                'performance_score' => $result['scores']['performance'] ?? null,
+                'seo_score' => $result['scores']['seo'] ?? null,
+                'accessibility_score' => $result['scores']['accessibility'] ?? null,
+                'best_practices_score' => $result['scores']['best_practices'] ?? null,
+                'lcp' => $result['metrics']['lcp'] ?? null,
+                'fcp' => $result['metrics']['fcp'] ?? null,
+                'cls' => $result['metrics']['cls'] ?? null,
+                'tbt' => $result['metrics']['tbt'] ?? null,
+                'speed_index' => $result['metrics']['speed_index'] ?? null,
+            ]
+        );
+
+        return response()->json($result);
+    }
+}

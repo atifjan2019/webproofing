@@ -136,6 +136,19 @@ class GooglePropertiesController extends Controller
         }
 
         $user = Auth::user();
+
+        // If user has disconnected Google account, return disconnected state immediately
+        // This prevents showing stale cached data
+        if (!$user->googleAccount) {
+            return response()->json([
+                'ga4' => null,
+                'gsc' => null,
+                'daily' => [],
+                'connected' => false,
+                'error' => 'No Google account connected'
+            ]);
+        }
+
         $period = $request->input('period', '30d');
         $refresh = $request->boolean('refresh', false);
 

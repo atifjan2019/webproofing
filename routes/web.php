@@ -47,6 +47,10 @@ Route::middleware('auth')->group(function () {
     // Analytics routes
     Route::get('/sites/{site}/analytics', [App\Http\Controllers\SiteAnalyticsController::class, 'show'])->name('sites.analytics');
 
+    // PageSpeed routes
+    Route::get('/sites/{site}/pagespeed', [App\Http\Controllers\SitePageSpeedController::class, 'show'])->name('sites.pagespeed');
+    Route::post('/sites/{site}/pagespeed/analyze', [App\Http\Controllers\SitePageSpeedController::class, 'analyze'])->name('sites.pagespeed.analyze');
+
     // =============================================
     // Google OAuth Routes (User-level)
     // =============================================

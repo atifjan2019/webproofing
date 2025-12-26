@@ -111,4 +111,20 @@ class Site extends Model
     {
         return $this->trialDomain && !$this->trialDomain->is_expired && now()->lt($this->trialDomain->trial_ends_at);
     }
+    /**
+     * Get pagespeed metrics for this site.
+     */
+    public function pagespeedMetrics(): HasMany
+    {
+        return $this->hasMany(SitePagespeedMetric::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($site) {
+            // Auto-run PageSpeed test on creation
+            \App\Jobs\RunPageSpeedAnalysis::dispatch($site, 'mobile');
+            \App\Jobs\RunPageSpeedAnalysis::dispatch($site, 'desktop');
+        });
+    }
 }

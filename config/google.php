@@ -42,4 +42,7 @@ return [
 
     // Search Console API
     'gsc_api_base' => 'https://www.googleapis.com/webmasters/v3',
+
+    // PageSpeed API
+    'pagespeed_api_key' => env('GOOGLE_PAGESPEED_API_KEY'),
 ];
