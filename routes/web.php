@@ -16,14 +16,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('welcome');
 });
+
+Route::get('/docs', function () {
+    return view('docs');
+})->name('docs');
+
+Route::view('/pricing', 'pricing')->name('pricing');
+Route::post('/pricing/feedback', [App\Http\Controllers\PricingFeedbackController::class, 'store'])->name('pricing.feedback');
 
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::view('/pricing', 'pricing')->name('pricing');
-    Route::post('/pricing/feedback', [App\Http\Controllers\PricingFeedbackController::class, 'store'])->name('pricing.feedback');
 
     // Profile routes (Disabled for Public Testing)
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

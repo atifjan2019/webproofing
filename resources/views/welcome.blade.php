@@ -470,6 +470,7 @@
         <nav class="nav">
             <a href="/" class="nav-logo">Web<span>Proofing</span></a>
             <div class="nav-links">
+                <a href="{{ route('pricing') }}" class="nav-link">Pricing</a>
                 @if (Route::has('login'))
                     @auth
                         <a href="{{ url('/dashboard') }}" class="nav-link">Dashboard</a>
@@ -493,7 +494,7 @@
             Visual proof + performance data in one simple dashboard.
         </p>
         <div class="hero-cta">
-            <a href="{{ route('register') }}" class="btn btn-primary btn-lg">View Demo</a>
+            <a href="{{ route('login') }}" class="btn btn-primary btn-lg">View Demo</a>
             <span class="hero-note">Early product – feedback welcome</span>
         </div>
     </section>
@@ -702,7 +703,7 @@
         <h2>Ready to try it?</h2>
         <p>See what WebProofing can do for your websites.</p>
         <div class="cta-buttons">
-            <a href="{{ route('register') }}" class="btn btn-primary btn-lg">View Demo</a>
+            <a href="{{ route('login') }}" class="btn btn-primary btn-lg">View Demo</a>
             <span class="hero-note">Early product – feedback welcome</span>
         </div>
     </section>
@@ -710,7 +711,13 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; {{ date('Y') }} WebProofing. All rights reserved.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <p>&copy; {{ date('Y') }} WebProofing. All rights reserved.</p>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="{{ route('docs') }}"
+                        style="color: var(--color-text-muted); text-decoration: none; font-size: 0.875rem;">Documentation</a>
+                </div>
+            </div>
         </div>
     </footer>
 </body>

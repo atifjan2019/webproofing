@@ -633,38 +633,6 @@
         </div>
     </div>
 
-    <!-- Trust Section -->
-    <div class="trust-section">
-        <div class="container">
-            <div class="trust-grid">
-                <div class="trust-item">
-                    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <div class="trust-title">Instant Setup</div>
-                    <div class="trust-text">Add your site and start monitoring in under 2 minutes.</div>
-                </div>
-                <div class="trust-item">
-                    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <div class="trust-title">Secure & Private</div>
-                    <div class="trust-text">Your data is encrypted and never shared with third parties.</div>
-                </div>
-                <div class="trust-item">
-                    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <div class="trust-title">Premium Support</div>
-                    <div class="trust-text">Get help from our team whenever you need it.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Feedback Section -->
     <div class="feedback-section">
         <div class="container">
@@ -721,6 +689,38 @@
 
                     <button type="submit" class="feedback-submit">Submit Feedback</button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trust Section -->
+    <div class="trust-section">
+        <div class="container">
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <div class="trust-title">Instant Setup</div>
+                    <div class="trust-text">Add your site and start monitoring in under 2 minutes.</div>
+                </div>
+                <div class="trust-item">
+                    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <div class="trust-title">Secure & Private</div>
+                    <div class="trust-text">Your data is encrypted and never shared with third parties.</div>
+                </div>
+                <div class="trust-item">
+                    <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <div class="trust-title">Premium Support</div>
+                    <div class="trust-text">Get help from our team whenever you need it.</div>
+                </div>
             </div>
         </div>
     </div>
