@@ -29,13 +29,15 @@ class PageSpeedService
         }
 
         try {
-            $response = Http::timeout(150) // Increased timeout slightly
-                ->get($this->baseUrl, [
-                    'url' => $url,
-                    'key' => $this->apiKey,
-                    'strategy' => $strategy,
-                    'category' => ['PERFORMANCE', 'SEO', 'ACCESSIBILITY', 'BEST_PRACTICES'],
-                ]);
+            $response = Http::timeout(150)
+                ->withHeaders([
+                    'Referer' => config('app.url'),
+                ])->get($this->baseUrl, [
+                        'url' => $url,
+                        'key' => $this->apiKey,
+                        'strategy' => $strategy,
+                        'category' => ['PERFORMANCE', 'SEO', 'ACCESSIBILITY', 'BEST_PRACTICES'],
+                    ]);
 
             if (!$response->successful()) {
                 $errorData = $response->json();
