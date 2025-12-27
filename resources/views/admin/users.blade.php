@@ -293,6 +293,26 @@
             </div>
         @endif
 
+        <!-- Search & Filter -->
+        <div class="card card-body mb-lg animate-fadeInUp" style="animation-delay: 50ms;">
+            <form action="{{ route('admin.users') }}" method="GET" class="flex gap-md">
+                <div class="flex-1">
+                    <input type="text" name="search" value="{{ $search ?? '' }}"
+                        placeholder="Search by name or email..." class="form-input w-full">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Search
+                </button>
+                @if($search)
+                    <a href="{{ route('admin.users') }}" class="btn btn-secondary">Clear</a>
+                @endif
+            </form>
+        </div>
+
         <!-- Users Table -->
         <div class="card animate-fadeInUp" style="animation-delay: 100ms;">
             <div class="overflow-x-auto">
@@ -317,15 +337,26 @@
                                             {{ strtoupper(substr($user->name, 0, 1)) }}
                                         </div>
                                         <div class="user-details">
-                                            <a href="{{ route('admin.users.show', $user) }}" class="user-name {{ $user->is_super_admin ? 'text-super-admin' : ($user->is_suspended ? 'text-suspended' : 'text-active') }}">
+                                            <a href="{{ route('admin.users.show', $user) }}"
+                                                class="user-name {{ $user->is_super_admin ? 'text-super-admin' : ($user->is_suspended ? 'text-suspended' : 'text-active') }}">
                                                 {{ $user->name }}
                                                 @if($user->is_super_admin)
                                                     <span class="status-badge active"
-                                                        style="margin-left: 0.5rem; background: rgba(250, 176, 5, 0.1); color: #fab005;">Admin</span>
+                                                        style="margin-left: 0.5rem; background: rgba(250, 176, 5, 0.1); color: #fab005;">Super
+                                                        Admin</span>
+                                                @else
+                                                    <span class="status-badge"
+                                                        style="margin-left: 0.5rem; background: rgba(34, 184, 207, 0.1); color: #22b8cf;">Customer</span>
                                                 @endif
                                                 @if($user->is_suspended)
                                                     <span class="status-badge canceled"
                                                         style="margin-left: 0.5rem;">Suspended</span>
+                                                @else
+                                                    <span class="status-badge active" style="margin-left: 0.5rem;">Active</span>
+                                                @endif
+
+                                                @if($user->has_free_access)
+                                                    <span class="status-badge trialing" style="margin-left: 0.5rem;">Free</span>
                                                 @endif
                                             </a>
                                             <span class="user-email">{{ $user->email }}</span>

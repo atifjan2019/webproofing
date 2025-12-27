@@ -31,14 +31,23 @@ class AdminDashboardController extends Controller
     /**
      * List all users with their details.
      */
-    public function users()
+    public function users(Request $request)
     {
+        $search = $request->input('search');
+
         $users = User::with(['subscription', 'sites'])
             ->withCount('sites')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('admin.users', compact('users'));
+        return view('admin.users', compact('users', 'search'));
     }
 
     /**

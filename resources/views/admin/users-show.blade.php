@@ -44,6 +44,12 @@
                         <div>
                             <label class="text-xs text-muted uppercase tracking-wider">Status</label>
                             <div class="mt-xs">
+                                @if($user->is_super_admin)
+                                    <span class="badge badge-warning" style="background: #fab005; color: white;">Super
+                                        Admin</span>
+                                @else
+                                    <span class="badge" style="background: #22b8cf; color: white;">Customer</span>
+                                @endif
                                 @if($user->is_suspended)
                                     <span class="badge badge-danger">Suspended</span>
                                 @else
@@ -96,7 +102,8 @@
                     <div class="mb-lg">
                         <label class="text-xs text-muted uppercase tracking-wider">Stripe Customer ID</label>
                         <p class="font-mono text-sm bg-gray-100 p-xs rounded mt-xs">
-                            {{ $user->stripe_customer_id ?? 'N/A' }}</p>
+                            {{ $user->stripe_customer_id ?? 'N/A' }}
+                        </p>
                     </div>
 
                     @php
