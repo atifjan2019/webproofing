@@ -29,23 +29,26 @@ class PageSpeedService
         }
 
         try {
-            $response = Http::timeout(120)
-                ->withHeaders([
-                    'Referer' => config('app.url'),
-                ])->get($this->baseUrl, [
-                        'url' => $url,
-                        'key' => $this->apiKey,
-                        'strategy' => $strategy,
-                        'category' => ['PERFORMANCE', 'SEO', 'ACCESSIBILITY', 'BEST_PRACTICES'],
-                    ]);
+            $response = Http::timeout(150) // Increased timeout slightly
+                ->get($this->baseUrl, [
+                    'url' => $url,
+                    'key' => $this->apiKey,
+                    'strategy' => $strategy,
+                    'category' => ['PERFORMANCE', 'SEO', 'ACCESSIBILITY', 'BEST_PRACTICES'],
+                ]);
 
             if (!$response->successful()) {
+                $errorData = $response->json();
+                $errorMessage = $errorData['error']['message'] ?? 'Unknown Google API Error';
+
                 Log::error('PageSpeed API failed', [
                     'url' => $url,
                     'status' => $response->status(),
-                    'body' => $response->body(),
+                    'error' => $errorMessage,
+                    'full_body' => $response->body(),
                 ]);
-                return null;
+
+                throw new \Exception($errorMessage);
             }
 
             return $this->formatResult($response->json());
@@ -55,7 +58,7 @@ class PageSpeedService
                 'url' => $url,
                 'error' => $e->getMessage(),
             ]);
-            return null;
+            throw $e;
         }
     }
 

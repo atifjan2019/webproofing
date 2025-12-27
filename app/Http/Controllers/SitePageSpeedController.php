@@ -68,11 +68,11 @@ class SitePageSpeedController extends Controller
         }
 
         // Run analysis
-        $result = $pageSpeedService->analyze($url, $strategy);
-
-        if (!$result) {
+        try {
+            $result = $pageSpeedService->analyze($url, $strategy);
+        } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Failed to analyze metrics. Please check your API key and try again.',
+                'error' => 'Google API Error: ' . $e->getMessage(),
             ], 500);
         }
 
