@@ -264,10 +264,44 @@
                 </section>
 
                 <!-- Top Search Queries -->
-                <section class="card" x-show="gscQueries && gscQueries.length > 0">
+                <section class="card" x-show="hasGsc">
                     <div class="card-body">
-                        <h3 class="font-semibold text-black mb-lg">Top Search Queries</h3>
-                        <div class="table-responsive">
+                        <div class="flex flex-col lg-flex-row lg-items-center justify-between gap-md mb-lg">
+                            <div>
+                                <h3 class="font-semibold text-black">Search Performance</h3>
+                                <p class="text-sm text-secondary">Analyze top queries using RegEx filters.</p>
+                            </div>
+
+                            <!-- GSC RegEx Filter UI -->
+                            <div class="flex flex-wrap items-center gap-sm">
+                                <div class="relative">
+                                    <select x-model="gscFilterPreset" @change="handlePresetChange"
+                                        class="form-select text-sm py-xs pl-sm pr-lg"
+                                        style="min-width: 160px; height: 38px; border-radius: 8px; border: 1px solid var(--color-border); background: #fff;">
+                                        <option value="none">All Queries</option>
+                                        <option value="questions">Questions</option>
+                                        <option value="longtail">Long-Tail (5+ words)</option>
+                                        <option value="brand">Brand Queries</option>
+                                        <option value="transactional">Transactional</option>
+                                        <option value="informational">Informational</option>
+                                        <option value="custom">Custom RegEx...</option>
+                                    </select>
+                                </div>
+
+                                <div x-show="gscFilterPreset === 'custom' || gscFilterPreset === 'brand'"
+                                    class="flex items-center gap-xs">
+                                    <input type="text" x-model="gscFilterExpression" @keyup.enter="applyFilter"
+                                        placeholder="Enter RegEx..." class="form-input text-sm py-xs px-sm"
+                                        style="width: 200px; height: 38px; border-radius: 8px; border: 1px solid var(--color-border);">
+                                </div>
+
+                                <button @click="applyFilter" class="btn btn-secondary btn-sm" style="height: 38px;">
+                                    Apply
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive" x-show="gscQueries && gscQueries.length > 0">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -292,6 +326,11 @@
                                     </template>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Empty Queries State -->
+                        <div x-show="!gscQueries || gscQueries.length === 0" class="text-center py-xl">
+                            <p class="text-muted">No queries found for this period/filter.</p>
                         </div>
                     </div>
                 </section>
@@ -360,6 +399,47 @@
                 dailyData: [],
                 gscQueries: [],
 
+                // GSC Filter States
+                gscFilterPreset: 'none',
+                gscFilterExpression: '',
+                lastFilter: { period: '7d', refresh: false },
+
+                init() {
+                    // Listen for filter-changed events from the period filter
+                    window.addEventListener('filter-changed', (e) => {
+                        this.lastFilter = e.detail;
+                        this.fetchData(this.lastFilter);
+                    });
+                },
+
+                handlePresetChange() {
+                    const domain = '{{ $site->domain }}'.split('.')[0];
+                    if (this.gscFilterPreset === 'questions') {
+                        this.gscFilterExpression = '^who|^what|^where|^when|^why|^how|^do|^can|^is|^are|^does';
+                    } else if (this.gscFilterPreset === 'longtail') {
+                        this.gscFilterExpression = '([^" "] + " "){4,}';
+                    } else if (this.gscFilterPreset === 'brand') {
+                        this.gscFilterExpression = domain;
+                    } else if (this.gscFilterPreset === 'transactional') {
+                        this.gscFilterExpression = 'buy|price|cost|shop|discount|order';
+                    } else if (this.gscFilterPreset === 'informational') {
+                        this.gscFilterExpression = 'how to|why|what is|guide|tutorial';
+                    } else if (this.gscFilterPreset === 'none') {
+                        this.gscFilterExpression = '';
+                        this.applyFilter();
+                        return;
+                    }
+
+                    // For custom, we don't automatically trigger refresh until they type something/apply
+                    if (this.gscFilterPreset !== 'custom') {
+                        this.applyFilter();
+                    }
+                },
+
+                applyFilter() {
+                    this.fetchData(this.lastFilter);
+                },
+
                 async fetchData(filter) {
                     this.loading = true;
                     // Notify filter about loading state
@@ -372,6 +452,11 @@
                         url.searchParams.append('period', filter.period);
                         if (filter.refresh) {
                             url.searchParams.append('refresh', '1');
+                        }
+
+                        // Add GSC regex filter if present
+                        if (this.gscFilterExpression) {
+                            url.searchParams.append('gsc_regex', this.gscFilterExpression);
                         }
 
                         const res = await fetch(url);

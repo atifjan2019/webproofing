@@ -16,7 +16,7 @@ class SiteAnalyticsService
     ) {
     }
 
-    public function getSiteMetrics(User $user, Site $site, string $period): array
+    public function getSiteMetrics(User $user, Site $site, string $period, array $gscFilters = []): array
     {
         $dates = $this->calculateDates($period);
         $startDate = $dates['start'];
@@ -56,6 +56,9 @@ class SiteAnalyticsService
 
         // Fetch GSC Data
         if ($site->hasGsc() && $user->googleAccount) {
+            // Overall performance usually doesn't need the query filter, 
+            // but if we want to filter the OVERALL stats by query, we can pass it here too.
+            // For now, let's just stick to the queries table as per the article's focus.
             $response['gsc'] = $this->gscService->fetchGscPerformance(
                 $user,
                 $site->gsc_site_url,
@@ -72,13 +75,14 @@ class SiteAnalyticsService
             );
             $this->mergeDailyData($response['daily'], $gscDaily, 'gsc');
 
-            // Fetch top queries
+            // Fetch top queries WITH filters
             $response['gsc_queries'] = $this->gscService->fetchGscQueries(
                 $user,
                 $site->gsc_site_url,
                 $startDate,
                 $endDate,
-                20
+                20,
+                $gscFilters
             );
         }
 

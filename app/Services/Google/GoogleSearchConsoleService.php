@@ -208,7 +208,7 @@ class GoogleSearchConsoleService
     /**
      * Fetch top search queries from GSC.
      */
-    public function fetchGscQueries(User $user, string $siteUrl, string $startDate, string $endDate, int $limit = 20): ?array
+    public function fetchGscQueries(User $user, string $siteUrl, string $startDate, string $endDate, int $limit = 20, array $filters = []): ?array
     {
         $accessToken = $this->tokenManager->getValidAccessToken($user);
 
@@ -219,14 +219,30 @@ class GoogleSearchConsoleService
         try {
             $encodedSiteUrl = urlencode($siteUrl);
 
+            $requestBody = [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'dimensions' => ['query'],
+                'rowLimit' => $limit,
+                'dataState' => 'all', // Include fresh/preliminary data
+            ];
+
+            if (!empty($filters)) {
+                $requestBody['dimensionFilterGroups'] = [
+                    [
+                        'filters' => array_map(function ($f) {
+                            return [
+                                'dimension' => $f['dimension'] ?? 'query',
+                                'operator' => $f['operator'] ?? 'includingRegex',
+                                'expression' => $f['expression'],
+                            ];
+                        }, $filters)
+                    ]
+                ];
+            }
+
             $response = Http::withToken($accessToken)
-                ->post(config('google.gsc_api_base') . "/sites/{$encodedSiteUrl}/searchAnalytics/query", [
-                    'startDate' => $startDate,
-                    'endDate' => $endDate,
-                    'dimensions' => ['query'],
-                    'rowLimit' => $limit,
-                    'dataState' => 'all', // Include fresh/preliminary data
-                ]);
+                ->post(config('google.gsc_api_base') . "/sites/{$encodedSiteUrl}/searchAnalytics/query", $requestBody);
 
             if (!$response->successful()) {
                 Log::error('Failed to fetch GSC queries', [
