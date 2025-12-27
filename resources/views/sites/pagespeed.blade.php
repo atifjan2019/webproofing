@@ -16,13 +16,20 @@
             width: 200%;
             height: 200%;
             background: radial-gradient(circle at 30% 50%, rgba(238, 49, 79, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
+                radial-gradient(circle at 70% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
             animation: heroGlow 15s ease-in-out infinite;
         }
 
         @keyframes heroGlow {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(180deg); }
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(180deg);
+            }
         }
 
         .psi-hero-content {
@@ -156,7 +163,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Results Section */
@@ -451,6 +460,7 @@
             .metric-card:last-child {
                 border-bottom: none;
             }
+
             .metric-card:nth-last-child(2) {
                 border-bottom: 1px solid var(--color-border);
             }
@@ -546,8 +556,17 @@
         }
 
         @keyframes emptyPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(238, 49, 79, 0.2); }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px 10px rgba(238, 49, 79, 0.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(238, 49, 79, 0.2);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 40px 10px rgba(238, 49, 79, 0.1);
+            }
         }
 
         .empty-state-icon svg {
@@ -600,6 +619,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -607,8 +627,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .animate-slide-up {
@@ -619,10 +644,21 @@
             animation: fadeIn 0.5s ease-out forwards;
         }
 
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-        .delay-400 { animation-delay: 0.4s; }
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
 
         /* Number counter animation */
         .score-counter {
@@ -636,14 +672,16 @@
             <div class="psi-hero-content container">
                 <!-- Header -->
                 <div class="flex items-center gap-md mb-xl">
-                    <a href="{{ route('sites.index') }}" class="btn btn-secondary btn-icon" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white;">
+                    <a href="{{ route('sites.index') }}" class="btn btn-secondary btn-icon"
+                        style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white;">
                         <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </a>
                     <div>
                         <h1 style="font-size: 1.75rem; font-weight: 700; color: white;">{{ $site->domain }}</h1>
-                        <p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-top: 0.25rem;">Website Speed Test</p>
+                        <p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-top: 0.25rem;">Website Speed
+                            Test</p>
                     </div>
                 </div>
 
@@ -654,46 +692,58 @@
                     <div class="url-display">
                         <div class="url-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                             </svg>
                         </div>
                         <div>
                             <div class="url-label">Analyzing URL</div>
-                            <div class="url-text">{{ str_starts_with($site->domain, 'http') ? $site->domain : 'https://' . $site->domain }}</div>
+                            <div class="url-text">
+                                {{ str_starts_with($site->domain, 'http') ? $site->domain : 'https://' . $site->domain }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-md flex-wrap">
                         <!-- Strategy Toggle -->
                         <div class="strategy-toggle">
-                            <button @click="strategy = 'mobile'; loadStoredMetrics()"
-                                class="strategy-btn"
+                            <button @click="strategy = 'mobile'; loadStoredMetrics()" class="strategy-btn"
                                 :class="strategy === 'mobile' ? 'active' : ''">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                 </svg>
                                 Mobile
                             </button>
-                            <button @click="strategy = 'desktop'; loadStoredMetrics()"
-                                class="strategy-btn"
+                            <button @click="strategy = 'desktop'; loadStoredMetrics()" class="strategy-btn"
                                 :class="strategy === 'desktop' ? 'active' : ''">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                                 Desktop
                             </button>
                         </div>
 
-                        <!-- Retest Button -->
-                        <button @click="runTest" class="retest-btn" :disabled="loading">
-                            <template x-if="!loading">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                            </template>
-                            <div x-show="loading" class="loading-spinner"></div>
-                            <span x-text="loading ? 'Analyzing...' : (results ? 'Retest' : 'Run Analysis')"></span>
-                        </button>
+                        @if($trialStatus['can_monitor'])
+                            <!-- Retest Button -->
+                            <button @click="runTest" class="retest-btn" :disabled="loading">
+                                <template x-if="!loading">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                        style="width: 18px; height: 18px;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                </template>
+                                <div x-show="loading" class="loading-spinner"></div>
+                                <span x-text="loading ? 'Analyzing...' : (results ? 'Retest' : 'Run Analysis')"></span>
+                            </button>
+                        @else
+                            <form action="{{ route('billing.checkout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="retest-btn">Upgrade to Analyze</button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -704,7 +754,8 @@
             <!-- Error Message -->
             <div x-show="error" x-cloak class="error-alert animate-fade-in">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <span x-text="error"></span>
             </div>
@@ -720,13 +771,11 @@
                             <circle class="score-ring-track" cx="110" cy="110" r="95" />
                             <!-- Glow -->
                             <circle class="score-ring-glow" cx="110" cy="110" r="95"
-                                :stroke="getScoreColor(results?.scores?.performance)"
-                                stroke-dasharray="597"
+                                :stroke="getScoreColor(results?.scores?.performance)" stroke-dasharray="597"
                                 :stroke-dashoffset="597 - (597 * (results?.scores?.performance || 0) / 100)" />
                             <!-- Progress -->
                             <circle class="score-ring-progress" cx="110" cy="110" r="95"
-                                :stroke="getScoreColor(results?.scores?.performance)"
-                                stroke-dasharray="597"
+                                :stroke="getScoreColor(results?.scores?.performance)" stroke-dasharray="597"
                                 :stroke-dashoffset="597 - (597 * (results?.scores?.performance || 0) / 100)" />
                         </svg>
                         <div class="score-value-wrapper">
@@ -749,12 +798,12 @@
                             <div class="score-card-ring">
                                 <svg class="score-card-svg" viewBox="0 0 64 64">
                                     <circle class="score-card-track" cx="32" cy="32" r="26" />
-                                    <circle class="score-card-progress" cx="32" cy="32" r="26"
-                                        :stroke="config.color"
+                                    <circle class="score-card-progress" cx="32" cy="32" r="26" :stroke="config.color"
                                         stroke-dasharray="163"
                                         :stroke-dashoffset="163 - (163 * (results?.scores?.[key] || 0) / 100)" />
                                 </svg>
-                                <div class="score-card-value" :style="'color: ' + config.color" x-text="Math.round(results?.scores?.[key] || 0)"></div>
+                                <div class="score-card-value" :style="'color: ' + config.color"
+                                    x-text="Math.round(results?.scores?.[key] || 0)"></div>
                             </div>
                             <div class="score-card-info">
                                 <h4 x-text="config.label"></h4>
@@ -770,7 +819,8 @@
                         <div class="lab-data-title">
                             <div class="lab-data-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                 </svg>
                             </div>
                             <h3>Lab Data Metrics</h3>
@@ -838,7 +888,8 @@
             <div x-show="!results && !loading && !error" class="empty-state animate-fade-in">
                 <div class="empty-state-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
                 <h3>Ready to Analyze</h3>

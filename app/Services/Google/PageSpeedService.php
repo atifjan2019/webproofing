@@ -29,9 +29,10 @@ class PageSpeedService
         }
 
         try {
-            $response = Http::withHeaders([
-                'Referer' => config('app.url'),
-            ])->get($this->baseUrl, [
+            $response = Http::timeout(120)
+                ->withHeaders([
+                    'Referer' => config('app.url'),
+                ])->get($this->baseUrl, [
                         'url' => $url,
                         'key' => $this->apiKey,
                         'strategy' => $strategy,

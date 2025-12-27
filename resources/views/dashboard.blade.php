@@ -138,7 +138,7 @@
                                         <span class="site-meta-dot"></span>
                                         @php $status = $site->trial_status; @endphp
                                         <span
-                                            class="@if($status['status'] === 'trial') text-success @elseif($status['status'] === 'expired') text-danger @elseif($status['status'] === 'paused') text-warning @else text-muted @endif font-medium">
+                                            class="@if(in_array($status['status'], ['subscribed', 'subscribed_trial'])) text-success @elseif($status['status'] === 'trial') text-success @elseif($status['status'] === 'expired') text-danger @elseif($status['status'] === 'paused') text-warning @else text-muted @endif font-medium">
                                             {{ $status['label'] }}
                                         </span>
                                     </div>

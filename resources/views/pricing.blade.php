@@ -1,78 +1,74 @@
 <x-app-layout>
     <style>
         .pricing-hero {
-            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
-            padding: 6rem 0 8rem;
             position: relative;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #16213e 100%);
+            border-radius: var(--radius-2xl);
+            margin-bottom: var(--spacing-xl);
             overflow: hidden;
         }
 
         .pricing-hero::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 70%, rgba(238, 49, 79, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 70% 30%, rgba(100, 100, 255, 0.1) 0%, transparent 50%);
-            animation: pulse 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 0.5;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.8;
-                transform: scale(1.05);
-            }
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(238, 49, 79, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(34, 139, 230, 0.1) 0%, transparent 50%);
+            pointer-events: none;
         }
 
         .pricing-hero-content {
             position: relative;
             z-index: 1;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .pricing-hero h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .pricing-hero p {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .pricing-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(238, 49, 79, 0.2);
-            border: 1px solid rgba(238, 49, 79, 0.3);
-            border-radius: 9999px;
-            color: #ff6b7a;
+            gap: 0.375rem;
+            padding: 0.375rem 0.875rem;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #ffffff;
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
+            border-radius: 9999px;
             margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .pricing-hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 1rem;
-            line-height: 1.1;
-        }
-
-        .pricing-hero p {
-            font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.7);
-            max-width: 600px;
-            margin: 0 auto;
+        .pricing-badge svg {
+            width: 14px;
+            height: 14px;
         }
 
         .pricing-card-wrapper {
+            display: flex;
+            justify-content: center;
             margin-top: -4rem;
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
 
         .pricing-card {
@@ -546,17 +542,19 @@
     </style>
 
     <!-- Hero Section -->
-    <div class="pricing-hero">
-        <div class="container pricing-hero-content text-center">
-            <div class="pricing-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon
-                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
-                Simple Pricing
+    <div class="container">
+        <div class="pricing-hero animate-fadeInUp">
+            <div class="pricing-hero-content">
+                <div class="pricing-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                    Simple Pricing
+                </div>
+                <h1>One Plan. Everything Included.</h1>
+                <p>No tiers, no confusion. Get all features at one transparent price.</p>
             </div>
-            <h1>One Plan. Everything Included.</h1>
-            <p>No tiers, no confusion. Get all features at one transparent price.</p>
         </div>
     </div>
 

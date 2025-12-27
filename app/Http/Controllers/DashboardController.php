@@ -38,8 +38,9 @@ class DashboardController extends Controller
             'total' => $allSites->count(),
             'active' => $allSites->filter(fn($s) => $s->trial_status['can_monitor'])->count(),
             'paused' => $allSites->filter(fn($s) => !$s->trial_status['can_monitor'])->count(),
-            'on_trial' => $allSites->filter(fn($s) => $s->trial_status['status'] === 'trial')->count(),
+            'on_trial' => $allSites->filter(fn($s) => in_array($s->trial_status['status'], ['trial', 'subscribed_trial']))->count(),
             'expired' => $allSites->filter(fn($s) => $s->trial_status['status'] === 'expired')->count(),
+            'subscribed' => $allSites->filter(fn($s) => ($s->trial_status['has_subscription'] ?? false))->count(),
         ];
 
         // Sites expiring soon (within 3 days)

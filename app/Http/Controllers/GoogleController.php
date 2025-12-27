@@ -25,6 +25,10 @@ class GoogleController extends Controller
      */
     public function connect(Request $request)
     {
+        if (!Auth::user()->service_google) {
+            return redirect()->back()->with('error', 'Google integration has been disabled for your account.');
+        }
+
         // Generate a state token for CSRF protection
         $state = Str::random(40);
         session(['google_oauth_state' => $state]);

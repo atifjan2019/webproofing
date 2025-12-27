@@ -30,7 +30,7 @@ class ScreenshotClient
 
         try {
             $response = Http::withToken($this->token)
-                ->timeout(60) // Generous timeout for screenshots
+                ->timeout(120) // Generous timeout for screenshots
                 ->post($endpoint, [
                     'site_id' => $siteId,
                     'url' => $url,

@@ -23,6 +23,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'stripe_customer_id',
+        'is_super_admin',
+        'has_free_access',
+        'is_suspended',
+        'suspension_reason',
+        'service_speed_test',
+        'service_screenshots',
+        'service_google',
     ];
 
     /**
@@ -43,6 +51,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_super_admin' => 'boolean',
+        'has_free_access' => 'boolean',
+        'is_suspended' => 'boolean',
+        'service_speed_test' => 'boolean',
+        'service_screenshots' => 'boolean',
+        'service_google' => 'boolean',
     ];
 
     /**
@@ -75,5 +89,29 @@ class User extends Authenticatable
     public function hasGoogleAccount(): bool
     {
         return $this->googleAccount !== null;
+    }
+
+    /**
+     * Get the user's subscription.
+     */
+    public function subscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+    /**
+     * Check if user has an active subscription.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscription && $this->subscription->isActive();
+    }
+
+    /**
+     * Check if user is on trial.
+     */
+    public function onTrial(): bool
+    {
+        return $this->subscription && $this->subscription->onTrial();
     }
 }

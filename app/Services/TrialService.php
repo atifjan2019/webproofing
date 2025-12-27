@@ -16,8 +16,28 @@ class TrialService
      */
     public function startTrial(Site $site): ?TrialDomain
     {
-        // Check if trial already exists for this domain
+        $user = $site->user;
+
+        // If user has free access, they can add unlimited sites
+        // We create a trial record but it acts differently in status check
+        if ($user && $user->has_free_access) {
+             return TrialDomain::create([
+                'domain' => $site->domain,
+                'user_id' => $site->user_id,
+                'site_id' => $site->id,
+                'trial_started_at' => now(),
+                'trial_ends_at' => now()->addYears(100), // Effectively forever
+                'is_expired' => false,
+            ]);
+        }
+
+        // Check if trial already exists for this domain globally
         if ($this->hasTrialBeenUsed($site->domain)) {
+            return null;
+        }
+
+        // Check if USER has already used their 1 free trial allowance
+        if ($this->hasUserUsedTrialAllowance($user)) {
             return null;
         }
 
@@ -32,6 +52,15 @@ class TrialService
     }
 
     /**
+     * Check if user has already used their trial allowance (1 site).
+     */
+    public function hasUserUsedTrialAllowance($user): bool
+    {
+        if (!$user) return false;
+        return TrialDomain::where('user_id', $user->id)->exists();
+    }
+
+    /**
      * Check if a domain has already used its trial globally.
      */
     public function hasTrialBeenUsed(string $domain): bool
@@ -41,10 +70,26 @@ class TrialService
 
     /**
      * Check if a site is eligible for trial.
+     * Takes user into account for allowance check.
      */
-    public function isEligibleForTrial(string $domain): bool
+    public function isEligibleForTrial(string $domain, $user = null): bool
     {
-        return !$this->hasTrialBeenUsed($domain);
+        // 1. Domain check
+        if ($this->hasTrialBeenUsed($domain)) {
+            return false;
+        }
+
+        // 2. User check
+        if ($user) {
+            if ($user->has_free_access) {
+                return true;
+            }
+            if ($this->hasUserUsedTrialAllowance($user)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -86,32 +131,81 @@ class TrialService
     }
 
     /**
-     * Get site status based on trial.
+     * Get site status based on trial and subscription.
      */
     public function getSiteStatus(Site $site): array
     {
+        $user = $site->user;
+
+        // Special override for Free Access / Super Admin
+        if ($user && $user->has_free_access) {
+             return [
+                'status' => 'active_free',
+                'label' => 'Active Free Account',
+                'message' => 'You have free access to all features.',
+                'can_monitor' => true,
+                'remaining_days' => null,
+                'has_subscription' => true, // Treated as subscribed
+            ];
+        }
+
+        // First, check if user has an active subscription
+        if ($user && $user->hasActiveSubscription()) {
+            $subscription = $user->subscription;
+
+            if ($subscription->onTrial()) {
+                $trialEnds = $subscription->trial_ends_at;
+                $remainingDays = (int) now()->diffInDays($trialEnds, false);
+
+                return [
+                    'status' => 'subscribed_trial',
+                    'label' => "Subscribed (Trial - {$remainingDays} days left)",
+                    'message' => "Your subscription trial ends " . $trialEnds->format('M d, Y'),
+                    'can_monitor' => true,
+                    'remaining_days' => max(0, $remainingDays),
+                    'ends_at' => $trialEnds,
+                    'has_subscription' => true,
+                ];
+            }
+
+            return [
+                'status' => 'subscribed',
+                'label' => 'Subscribed',
+                'message' => 'Your subscription is active.',
+                'can_monitor' => true,
+                'remaining_days' => null,
+                'has_subscription' => true,
+            ];
+        }
+
+        // Fall back to domain-based trial logic
         $trial = $site->trialDomain;
 
         if (!$trial) {
-            // Domain has already been used for trial by someone else
+            // Check why no trial?
+            // Case 1: Domain used elsewhere
             $existingTrial = $this->getTrialForDomain($site->domain);
-
             if ($existingTrial) {
-                return [
+                 return [
                     'status' => 'paused',
                     'label' => 'Upgrade Required',
                     'message' => 'This domain has already used its free trial.',
                     'can_monitor' => false,
                     'remaining_days' => 0,
+                    'has_subscription' => false,
                 ];
             }
 
+            // Case 2: User exhausted allowance?
+            // If they are here with no trial record, but own the site, it implies they added it 
+            // but were not eligible for trial at creation time.
             return [
-                'status' => 'unknown',
-                'label' => 'No Trial',
-                'message' => 'Trial not started.',
+                'status' => 'no_trial',
+                'label' => 'No Trial', // Or "Limit Reached"
+                'message' => 'Free trial limit reached (1 site per account). Upgrade to monitor more sites.',
                 'can_monitor' => false,
                 'remaining_days' => 0,
+                'has_subscription' => false,
             ];
         }
 
@@ -124,6 +218,7 @@ class TrialService
                 'can_monitor' => true,
                 'remaining_days' => $remaining,
                 'ends_at' => $trial->trial_ends_at,
+                'has_subscription' => false,
             ];
         }
 
@@ -135,6 +230,7 @@ class TrialService
             'can_monitor' => false,
             'remaining_days' => 0,
             'expired_at' => $trial->trial_ends_at,
+            'has_subscription' => false,
         ];
     }
 

@@ -19,11 +19,17 @@
                             class="nav-link {{ request()->routeIs('sites.*') ? 'active' : '' }}">
                             Websites
                         </a>
+                        <a href="{{ route('billing.index') }}"
+                            class="nav-link {{ request()->routeIs('billing.*') ? 'active' : '' }}">
+                            Billing
+                        </a>
                     @endauth
-                    <a href="{{ route('pricing') }}"
-                        class="nav-link {{ request()->routeIs('pricing') ? 'active' : '' }}">
-                        Pricing
-                    </a>
+                    @guest
+                        <a href="{{ route('pricing') }}"
+                            class="nav-link {{ request()->routeIs('pricing') ? 'active' : '' }}">
+                            Pricing
+                        </a>
+                    @endguest
                 </div>
             </div>
 
@@ -63,6 +69,13 @@
                             x-transition:leave="transition ease-in duration-100"
                             x-transition:leave-start="opacity-100 translate-y-0"
                             x-transition:leave-end="opacity-0 translate-y-1" x-cloak>
+                            <a href="{{ route('billing.index') }}" class="dropdown-item">
+                                <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                </svg>
+                                Billing
+                            </a>
                             <div class="dropdown-divider"></div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -104,10 +117,16 @@
                 <a href="{{ route('sites.index') }}" class="nav-link {{ request()->routeIs('sites.*') ? 'active' : '' }}">
                     Websites
                 </a>
+                <a href="{{ route('billing.index') }}"
+                    class="nav-link {{ request()->routeIs('billing.*') ? 'active' : '' }}">
+                    Billing
+                </a>
             @endauth
-            <a href="{{ route('pricing') }}" class="nav-link {{ request()->routeIs('pricing') ? 'active' : '' }}">
-                Pricing
-            </a>
+            @guest
+                <a href="{{ route('pricing') }}" class="nav-link {{ request()->routeIs('pricing') ? 'active' : '' }}">
+                    Pricing
+                </a>
+            @endguest
             @auth
                 <a href="{{ route('sites.create') }}" class="btn btn-primary btn-full mt-md">
                     Add New Website

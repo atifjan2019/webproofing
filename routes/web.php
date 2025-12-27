@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\GooglePropertiesController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SiteGoogleController;
+use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +27,9 @@ Route::get('/docs', function () {
 
 Route::view('/pricing', 'pricing')->name('pricing');
 Route::post('/pricing/feedback', [App\Http\Controllers\PricingFeedbackController::class, 'store'])->name('pricing.feedback');
+
+// Stripe Webhook (no CSRF, no auth)
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])->name('stripe.webhook');
 
 Route::middleware('auth')->group(function () {
     // Dashboard
@@ -50,6 +55,14 @@ Route::middleware('auth')->group(function () {
     // PageSpeed routes
     Route::get('/sites/{site}/pagespeed', [App\Http\Controllers\SitePageSpeedController::class, 'show'])->name('sites.pagespeed');
     Route::post('/sites/{site}/pagespeed/analyze', [App\Http\Controllers\SitePageSpeedController::class, 'analyze'])->name('sites.pagespeed.analyze');
+
+    // =============================================
+    // Billing Routes
+    // =============================================
+    Route::post('/billing/checkout', [BillingController::class, 'checkout'])->name('billing.checkout');
+    Route::get('/billing/success', [BillingController::class, 'success'])->name('billing.success');
+    Route::get('/billing/cancel', [BillingController::class, 'cancel'])->name('billing.cancel');
+    Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
 
     // =============================================
     // Google OAuth Routes (User-level)
@@ -78,4 +91,25 @@ Route::middleware('auth')->group(function () {
     Route::post('/sites/{site}/google/configure', [SiteGoogleController::class, 'store'])->name('sites.google.store');
 });
 
+// =============================================
+// Admin Routes (Super Admin Only)
+// =============================================
+Route::middleware(['auth', 'super.admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/users', [App\Http\Controllers\Admin\AdminDashboardController::class, 'users'])->name('users');
+    Route::get('/users/create', [App\Http\Controllers\Admin\AdminDashboardController::class, 'createUser'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\Admin\AdminDashboardController::class, 'storeUser'])->name('users.store');
+    Route::get('/users/{user}', [App\Http\Controllers\Admin\AdminDashboardController::class, 'showUser'])->name('users.show');
+    Route::post('/users/{user}/toggle-free-access', [App\Http\Controllers\Admin\AdminDashboardController::class, 'toggleFreeAccess'])->name('users.toggleFreeAccess');
+    Route::post('/users/{user}/suspend', [App\Http\Controllers\Admin\AdminDashboardController::class, 'suspendUser'])->name('users.suspend');
+    Route::post('/users/{user}/unsuspend', [App\Http\Controllers\Admin\AdminDashboardController::class, 'unsuspendUser'])->name('users.unsuspend');
+    Route::delete('/users/{user}', [App\Http\Controllers\Admin\AdminDashboardController::class, 'deleteUser'])->name('users.delete');
+    Route::post('/users/{user}/end-trial', [App\Http\Controllers\Admin\AdminDashboardController::class, 'endUserTrial'])->name('users.endTrial');
+    Route::post('/users/{user}/update-services', [App\Http\Controllers\Admin\AdminDashboardController::class, 'updateUserServices'])->name('users.updateServices');
+    Route::get('/sites', [App\Http\Controllers\Admin\AdminDashboardController::class, 'sites'])->name('sites');
+    Route::post('/sites/{site}/pause', [App\Http\Controllers\Admin\AdminDashboardController::class, 'pauseSite'])->name('sites.pause');
+    Route::post('/sites/{site}/resume', [App\Http\Controllers\Admin\AdminDashboardController::class, 'resumeSite'])->name('sites.resume');
+});
+
 require __DIR__ . '/auth.php';
+

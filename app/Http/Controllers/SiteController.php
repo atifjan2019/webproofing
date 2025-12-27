@@ -70,18 +70,16 @@ class SiteController extends Controller
         ]);
 
         // Start trial if eligible
-        if ($this->trialService->isEligibleForTrial($normalizedDomain)) {
+        if ($this->trialService->isEligibleForTrial($normalizedDomain, Auth::user())) {
             $this->trialService->startTrial($site);
 
-            // Auto-capture screenshot
-            try {
-                $this->screenshotService->captureAndSave($site);
-            } catch (\Exception $e) {
-                // Silently fail or log, don't block site creation
-                \Illuminate\Support\Facades\Log::error('Auto-screenshot failed: ' . $e->getMessage());
-            }
+            // Auto-capture screenshot in background
+            \App\Jobs\CaptureSiteScreenshot::dispatch($site)->onConnection('database');
 
-            $message = "Site '{$normalizedDomain}' added successfully! We're capturing your first screenshot now.";
+            // Auto-analyze speed in background
+            \App\Jobs\AnalyzeSiteSpeed::dispatch($site)->onConnection('database');
+
+            $message = "Site '{$normalizedDomain}' added successfully! We're capturing screenshots and analyzing performance in the background.";
         } else {
             $message = "Site '{$normalizedDomain}' added. This domain has already used its free trial - upgrade required to enable monitoring.";
         }

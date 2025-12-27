@@ -29,6 +29,23 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Check if user is suspended
+        if (Auth::user()->is_suspended) {
+            Auth::guard('web')->logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Your account has been suspended. Please contact support.',
+            ]);
+        }
+
+        // Redirect super admins to admin dashboard
+        if (Auth::user()->is_super_admin) {
+            return redirect()->route('admin.dashboard');
+        }
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

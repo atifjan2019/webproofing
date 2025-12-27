@@ -45,6 +45,10 @@ class ScreenshotController extends Controller
 
         $trialStatus = $this->trialService->getSiteStatus($site);
 
+        if (!$request->user()->service_screenshots) {
+            return back()->with('error', 'Screenshot service has been disabled for your account.');
+        }
+
         if (!$trialStatus['can_monitor']) {
             return back()->with('error', 'Monitoring is paused. Please upgrade to take screenshots.');
         }

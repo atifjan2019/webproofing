@@ -55,8 +55,12 @@
                         <h3 class="text-lg font-bold text-black">Upgrade Required</h3>
                         <p class="text-secondary">{{ $trialStatus['message'] }}</p>
                     </div>
+                    </div>
                 </div>
-                <a href="#" class="btn btn-primary btn-sm">Upgrade Now</a>
+                <form action="{{ route('billing.checkout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary btn-sm">Upgrade Now</button>
+                </form>
             </div>
         @endif
 

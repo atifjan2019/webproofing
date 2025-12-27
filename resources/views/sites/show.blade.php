@@ -18,6 +18,16 @@
                     class="badge @if($trialStatus['status'] === 'trial') badge-success @elseif($trialStatus['status'] === 'expired') badge-danger @elseif($trialStatus['status'] === 'paused') badge-warning @else badge-default @endif">
                     {{ $trialStatus['label'] }}
                 </span>
+
+                @if(!$trialStatus['can_monitor'])
+                    <form action="{{ route('billing.checkout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            Upgrade
+                        </button>
+                    </form>
+                @endif
+
                 <a href="https://{{ $site->domain }}" target="_blank" class="btn btn-secondary btn-sm">
                     <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -378,10 +388,19 @@
                         <div>
                             <label class="text-xs text-muted uppercase tracking-wider">Status</label>
                             <div class="flex items-center gap-sm mt-sm">
-                                <span
-                                    class="status-dot @if($site->status === 'active') active @else inactive @endif"></span>
-                                <span class="text-black font-medium"
-                                    style="text-transform: capitalize;">{{ $site->status }}</span>
+                                @if($trialStatus['status'] === 'trial')
+                                    <span class="status-dot active"></span>
+                                    <span class="text-black font-medium">Active (Trial)</span>
+                                @elseif(in_array($trialStatus['status'], ['subscribed', 'subscribed_trial']))
+                                    <span class="status-dot active"></span>
+                                    <span class="text-black font-medium">Active (Pro)</span>
+                                @elseif($trialStatus['status'] === 'active_free')
+                                    <span class="status-dot active"></span>
+                                    <span class="text-black font-medium">Active Free Account</span>
+                                @else
+                                    <span class="status-dot inactive" style="background: var(--color-text-muted);"></span>
+                                    <span class="text-black font-medium">Inactive</span>
+                                @endif
                             </div>
                         </div>
                     </div>

@@ -3,17 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Site;
-use App\Services\Google\PageSpeedService;
+use App\Services\TrialService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SitePageSpeedController extends Controller
 {
+    protected TrialService $trialService;
+
+    public function __construct(TrialService $trialService)
+    {
+        $this->trialService = $trialService;
+    }
+
     public function show(Site $site)
     {
         if ($site->user_id !== Auth::id()) {
             abort(403);
         }
+
+        $trialStatus = $this->trialService->getSiteStatus($site);
 
         // Fetch latest metrics
         $metrics = $site->pagespeedMetrics()
@@ -23,13 +32,28 @@ class SitePageSpeedController extends Controller
         return view('sites.pagespeed', [
             'site' => $site,
             'metrics' => $metrics,
+            'trialStatus' => $trialStatus,
         ]);
     }
 
-    public function analyze(Request $request, Site $site, PageSpeedService $pageSpeedService)
+    public function analyze(Request $request, Site $site, \App\Services\Google\PageSpeedService $pageSpeedService)
     {
         if ($site->user_id !== Auth::id()) {
             abort(403);
+        }
+
+        $trialStatus = $this->trialService->getSiteStatus($site);
+
+        if (!Auth::user()->service_speed_test) {
+            return response()->json([
+                'error' => 'Speed test service has been disabled for your account.',
+            ], 403);
+        }
+
+        if (!$trialStatus['can_monitor']) {
+            return response()->json([
+                'error' => 'Plan upgrade required to run speed tests.',
+            ], 403);
         }
 
         $request->validate([
