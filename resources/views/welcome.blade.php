@@ -197,9 +197,10 @@
 
         /* Hero */
         .hero {
-            padding-top: 5rem;
-            padding-bottom: 4rem;
+            padding-top: 6rem;
+            padding-bottom: 5rem;
             text-align: center;
+            background: radial-gradient(circle at 50% 0%, rgba(238, 49, 79, 0.03) 0%, rgba(255, 255, 255, 0) 50%);
         }
 
         .hero-tag {
@@ -878,6 +879,20 @@
                 font-size: 1rem;
             }
 
+            .hero-pills {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.75rem !important;
+                justify-content: stretch !important;
+            }
+
+            .hero-pills>div {
+                justify-content: center !important;
+                width: 100% !important;
+                padding: 0.5rem 0.25rem !important;
+                font-size: 0.75rem !important;
+            }
+
             .section {
                 padding: 2.5rem 0;
             }
@@ -1115,50 +1130,54 @@
 
     <!-- Hero -->
     <section class="hero container">
-        <span class="hero-tag">Visual monitoring for websites</span>
-        <h1>Know your website is working <br>with visual proof</h1>
-        <p class="hero-subtitle">
+        <span class="hero-tag" style="background: rgba(238, 49, 79, 0.1); color: #EE314F; font-weight: 600;">Visual
+            monitoring for websites</span>
+        <h1>
+            Know your website is working<br>
+            <span
+                style="background: linear-gradient(135deg, #EE314F 0%, #ff6b7a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">with
+                visual proof</span>
+        </h1>
+        <p class="hero-subtitle"
+            style="font-size: 1.125rem; line-height: 1.7; max-width: 540px; margin-bottom: 2.5rem;">
             WebProofing captures daily screenshots, runs PageSpeed tests, and connects your Google Analytics & Search
             Console.
-            Everything you need to monitor your website's health in one dashboard.
+            All your vital stats in one dashboard.
         </p>
 
-        <!-- Quick value props -->
-        <div
-            style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 2rem; margin-top: 1rem;">
+        <!-- Quick value props pills -->
+        <div class="hero-pills"
+            style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 2rem;">
             <div
-                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted);">
-                <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Daily Screenshots</span>
+                style="background: white; border: 1px solid var(--color-border); border-radius: 99px; padding: 0.4rem 0.875rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-text); box-shadow: 0 2px 4px rgba(0,0,0,0.02); white-space: nowrap;">
+                <span style="color: #10b981;">✓</span> Daily Screenshots
             </div>
             <div
-                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted);">
-                <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Google Analytics 4</span>
+                style="background: white; border: 1px solid var(--color-border); border-radius: 99px; padding: 0.4rem 0.875rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-text); box-shadow: 0 2px 4px rgba(0,0,0,0.02); white-space: nowrap;">
+                <span style="color: #10b981;">✓</span> PageSpeed Insights
             </div>
             <div
-                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted);">
-                <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Search Console data</span>
+                style="background: white; border: 1px solid var(--color-border); border-radius: 99px; padding: 0.4rem 0.875rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-text); box-shadow: 0 2px 4px rgba(0,0,0,0.02); white-space: nowrap;">
+                <span style="color: #10b981;">✓</span> Google Analytics 4
             </div>
             <div
-                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted);">
-                <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span>PageSpeed Insights</span>
+                style="background: white; border: 1px solid var(--color-border); border-radius: 99px; padding: 0.4rem 0.875rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.8125rem; font-weight: 500; color: var(--color-text); box-shadow: 0 2px 4px rgba(0,0,0,0.02); white-space: nowrap;">
+                <span style="color: #10b981;">✓</span> Search Console
             </div>
         </div>
 
         <div class="hero-cta">
-            <a href="{{ route('login') }}" class="btn btn-primary btn-lg">View Demo →</a>
-            <span class="hero-note">7-day free trial • No credit card required</span>
+            <a href="{{ route('login') }}" class="btn btn-primary btn-lg"
+                style="box-shadow: 0 10px 20px -5px rgba(238, 49, 79, 0.4); padding: 1rem 2.5rem;">
+                View Live Demo
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+            </a>
+            <p class="hero-note" style="margin-top: 1rem; font-size: 0.875rem; color: var(--color-text-muted);">
+                <span style="color: #10b981;">●</span> 7-day free trial • No credit card required
+            </p>
         </div>
     </section>
 
