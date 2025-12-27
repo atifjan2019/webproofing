@@ -1175,7 +1175,7 @@
                         d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
             </a>
-            <p class="hero-note" style="margin-top: 1rem; font-size: 0.875rem; color: var(--color-text-muted);">
+            <p class="hero-note" style="font-size: 0.875rem; color: var(--color-text-muted);">
                 <span style="color: #10b981;">●</span> 7-day free trial • No credit card required
             </p>
         </div>
