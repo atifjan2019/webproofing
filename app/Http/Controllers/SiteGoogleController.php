@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Site;
 use App\Services\Google\GoogleAnalyticsService;
 use App\Services\Google\GoogleSearchConsoleService;
+use App\Services\TrialService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,12 +13,12 @@ class SiteGoogleController extends Controller
 {
     protected GoogleAnalyticsService $ga4Service;
     protected GoogleSearchConsoleService $gscService;
-    protected \App\Services\TrialService $trialService;
+    protected TrialService $trialService;
 
     public function __construct(
         GoogleAnalyticsService $ga4Service,
         GoogleSearchConsoleService $gscService,
-        \App\Services\TrialService $trialService
+        TrialService $trialService
     ) {
         $this->middleware('auth');
         $this->ga4Service = $ga4Service;
@@ -104,3 +105,4 @@ class SiteGoogleController extends Controller
         return redirect()->route('sites.google', $site)
             ->with('success', 'Google services configured successfully.');
     }
+}
