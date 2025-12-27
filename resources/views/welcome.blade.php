@@ -197,7 +197,8 @@
 
         /* Hero */
         .hero {
-            padding: 5rem 0 4rem;
+            padding-top: 5rem;
+            padding-bottom: 4rem;
             text-align: center;
         }
 
@@ -860,7 +861,8 @@
             }
 
             .hero {
-                padding: 2.5rem 0;
+                padding-top: 2.5rem;
+                padding-bottom: 2.5rem;
             }
 
             .hero h1 {
