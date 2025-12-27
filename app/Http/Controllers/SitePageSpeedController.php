@@ -38,6 +38,7 @@ class SitePageSpeedController extends Controller
 
     public function analyze(Request $request, Site $site, \App\Services\Google\PageSpeedService $pageSpeedService)
     {
+        set_time_limit(180);
         if ($site->user_id !== Auth::id()) {
             abort(403);
         }

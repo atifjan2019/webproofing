@@ -36,7 +36,7 @@ class PageSpeedService
                         'url' => $url,
                         'key' => $this->apiKey,
                         'strategy' => $strategy,
-                        'category' => ['PERFORMANCE', 'SEO', 'ACCESSIBILITY', 'BEST_PRACTICES'],
+                        'category' => ['performance', 'accessibility', 'best-practices', 'seo'],
                     ]);
 
             if (!$response->successful()) {
@@ -53,7 +53,13 @@ class PageSpeedService
                 throw new \Exception($errorMessage);
             }
 
-            return $this->formatResult($response->json());
+            $data = $response->json();
+
+            // Log for debugging
+            $receivedCategories = array_keys($data['lighthouseResult']['categories'] ?? []);
+            Log::info('PageSpeed categories received', ['list' => $receivedCategories]);
+
+            return $this->formatResult($data);
 
         } catch (\Exception $e) {
             Log::error('PageSpeed exception', [

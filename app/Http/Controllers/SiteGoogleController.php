@@ -12,14 +12,17 @@ class SiteGoogleController extends Controller
 {
     protected GoogleAnalyticsService $ga4Service;
     protected GoogleSearchConsoleService $gscService;
+    protected \App\Services\TrialService $trialService;
 
     public function __construct(
         GoogleAnalyticsService $ga4Service,
-        GoogleSearchConsoleService $gscService
+        GoogleSearchConsoleService $gscService,
+        \App\Services\TrialService $trialService
     ) {
         $this->middleware('auth');
         $this->ga4Service = $ga4Service;
         $this->gscService = $gscService;
+        $this->trialService = $trialService;
     }
 
     /**
@@ -35,8 +38,8 @@ class SiteGoogleController extends Controller
         $user = Auth::user();
         $googleAccount = $user->googleAccount;
 
-        // Get trial status
-        $trialStatus = $this->getTrialStatus($site);
+        // Get trial status from centralized service
+        $trialStatus = $this->trialService->getSiteStatus($site);
 
         return view('sites.google-connect', [
             'site' => $site,
@@ -69,7 +72,7 @@ class SiteGoogleController extends Controller
         $ga4Properties = $this->ga4Service->listProperties($user) ?? [];
         $gscProperties = $this->gscService->listProperties($user) ?? [];
 
-        $trialStatus = $this->getTrialStatus($site);
+        $trialStatus = $this->trialService->getSiteStatus($site);
 
         return view('sites.google-configure', [
             'site' => $site,
@@ -101,41 +104,3 @@ class SiteGoogleController extends Controller
         return redirect()->route('sites.google', $site)
             ->with('success', 'Google services configured successfully.');
     }
-
-    /**
-     * Get trial status for a site.
-     */
-    protected function getTrialStatus(Site $site): array
-    {
-        $trialDomain = $site->trialDomain;
-
-        if (!$trialDomain) {
-            return [
-                'status' => 'none',
-                'label' => 'No Trial',
-                'can_monitor' => false,
-                'message' => 'This domain requires an active subscription.',
-            ];
-        }
-
-        if ($trialDomain->is_expired || now()->gte($trialDomain->trial_ends_at)) {
-            return [
-                'status' => 'expired',
-                'label' => 'Trial Expired',
-                'can_monitor' => false,
-                'remaining_days' => 0,
-                'message' => 'Your trial has expired. Upgrade to continue monitoring.',
-            ];
-        }
-
-        $remainingDays = now()->diffInDays($trialDomain->trial_ends_at);
-
-        return [
-            'status' => 'trial',
-            'label' => 'Trial Active',
-            'can_monitor' => true,
-            'remaining_days' => $remainingDays,
-            'message' => "{$remainingDays} days remaining in your trial.",
-        ];
-    }
-}
