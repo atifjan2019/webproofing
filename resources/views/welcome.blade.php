@@ -825,7 +825,7 @@
         /* Mobile */
         @media (max-width: 640px) {
             .container {
-                padding: 0 10px;
+                padding: 0 1rem;
             }
 
             .nav {
@@ -1810,7 +1810,7 @@
                 <p>Everything you need to know about WebProofing</p>
             </div>
 
-            <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+            <div style="max-width: 800px; margin: 0 auto;">
                 <!-- FAQ Item 1 -->
                 <div class="faq-item" style="border-bottom: 1px solid var(--color-border);">
                     <button class="faq-question" onclick="toggleFaq(this)"
