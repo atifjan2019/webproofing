@@ -85,6 +85,75 @@
             color: var(--color-text);
         }
 
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--color-text);
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 1000;
+            padding: 80px 20px 20px;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 1rem 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--color-text);
+            text-decoration: none;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .mobile-menu a:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-menu .btn-primary {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
         /* Buttons */
         .btn {
             display: inline-flex;
@@ -756,13 +825,11 @@
         /* Mobile */
         @media (max-width: 640px) {
             .container {
-                padding: 0 1rem;
+                padding: 0 10px;
             }
 
             .nav {
                 padding: 1rem 0;
-                flex-wrap: wrap;
-                gap: 1rem;
             }
 
             .nav-logo {
@@ -770,9 +837,11 @@
             }
 
             .nav-links {
-                gap: 0.75rem;
-                flex-wrap: wrap;
-                justify-content: center;
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
             }
 
             .nav-link {
@@ -808,7 +877,11 @@
             }
 
             .section {
-                padding: 3rem 0;
+                padding: 2.5rem 0;
+            }
+
+            .section-header {
+                margin-bottom: 2rem;
             }
 
             .section-header h2 {
@@ -848,6 +921,19 @@
             .diff-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1rem !important;
+            }
+
+            .stats-grid>div {
+                padding: 1rem !important;
+            }
+
+            .stats-grid .stat-number {
+                font-size: 2rem !important;
             }
 
             .audience-grid {
@@ -979,31 +1065,201 @@
             <a href="/" class="nav-logo">Web<span>Proofing</span></a>
             <div class="nav-links">
                 <a href="{{ route('pricing') }}" class="nav-link">Pricing</a>
+                <a href="#faq" class="nav-link">FAQ</a>
                 @if (Route::has('login'))
                     @auth
                         <a href="{{ url('/dashboard') }}" class="nav-link">Dashboard</a>
                     @else
                         <a href="{{ route('login') }}" class="nav-link">Log in</a>
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn btn-primary">Get Started</a>
+                            <a href="{{ route('register') }}" class="btn btn-primary">Get Started Free</a>
                         @endif
                     @endauth
                 @endif
             </div>
+            <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </nav>
     </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="{{ route('pricing') }}" onclick="toggleMobileMenu()">Pricing</a>
+        <a href="#faq" onclick="toggleMobileMenu()">FAQ</a>
+        @if (Route::has('login'))
+            @auth
+                <a href="{{ url('/dashboard') }}" onclick="toggleMobileMenu()">Dashboard</a>
+            @else
+                <a href="{{ route('login') }}" onclick="toggleMobileMenu()">Log in</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="btn btn-primary" onclick="toggleMobileMenu()">Get Started Free</a>
+                @endif
+            @endauth
+        @endif
+    </div>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const hamburger = document.querySelector('.hamburger');
+            menu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+    </script>
 
     <!-- Hero -->
     <section class="hero container">
         <span class="hero-tag">Visual monitoring for websites</span>
-        <h1>Know your website is working—<br>with visual proof</h1>
+        <h1>Know your website is working <br>with visual proof</h1>
         <p class="hero-subtitle">
-            WebProofing captures real browser screenshots and connects your Google Analytics & Search Console data.
-            Visual proof + performance data in one simple dashboard.
+            WebProofing captures daily screenshots, runs PageSpeed tests, and connects your Google Analytics & Search
+            Console.
+            Everything you need to monitor your website's health in one dashboard.
         </p>
+
+        <!-- Quick value props -->
+        <div
+            style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-bottom: 2rem; margin-top: 1rem;">
+            <div
+                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted);">
+                <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Daily Screenshots</span>
+            </div>
+            <div
+                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted);">
+                <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Google Analytics 4</span>
+            </div>
+            <div
+                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted);">
+                <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Search Console data</span>
+            </div>
+            <div
+                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9375rem; color: var(--color-text-muted);">
+                <svg width="20" height="20" fill="none" stroke="#10b981" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>PageSpeed Insights</span>
+            </div>
+        </div>
+
         <div class="hero-cta">
-            <a href="{{ route('login') }}" class="btn btn-primary btn-lg">View Demo</a>
-            <span class="hero-note">Early product – feedback welcome</span>
+            <a href="{{ route('login') }}" class="btn btn-primary btn-lg">View Demo →</a>
+            <span class="hero-note">7-day free trial • No credit card required</span>
+        </div>
+    </section>
+
+    <!-- Dashboard Preview Section -->
+    <section class="section" style="padding: 3rem 0 5rem;">
+        <div class="container">
+            <div
+                style="background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 1.5rem; padding: 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.15);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <div style="width: 12px; height: 12px; background: #ff5f56; border-radius: 50%;"></div>
+                    <div style="width: 12px; height: 12px; background: #ffbd2e; border-radius: 50%;"></div>
+                    <div style="width: 12px; height: 12px; background: #27ca40; border-radius: 50%;"></div>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 0.75rem; margin-left: 1rem;">WebProofing
+                        Dashboard</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <!-- Screenshot Card -->
+                    <div style="background: #ffffff; border-radius: 1rem; padding: 1.25rem; text-align: center;">
+                        <div
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 120px; border-radius: 0.75rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
+                            <svg width="48" height="48" fill="none" stroke="white" viewBox="0 0 24 24"
+                                style="opacity: 0.9;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <p style="font-size: 0.75rem; color: #6b7280; font-weight: 600;">Today's Screenshot</p>
+                        <p style="font-size: 0.625rem; color: #9ca3af;">Captured 2 hours ago</p>
+                    </div>
+                    <!-- GA4 Stats -->
+                    <div style="background: #ffffff; border-radius: 1rem; padding: 1.25rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#4285f4">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: #374151;">Google Analytics</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div>
+                                <p style="font-size: 1.25rem; font-weight: 700; color: #1a1a1a;">2,847</p>
+                                <p style="font-size: 0.625rem; color: #6b7280;">Visitors</p>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.25rem; font-weight: 700; color: #1a1a1a;">8,421</p>
+                                <p style="font-size: 0.625rem; color: #6b7280;">Page Views</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.25rem;">
+                            <span style="color: #10b981; font-size: 0.75rem; font-weight: 600;">↑ 12.5%</span>
+                            <span style="color: #9ca3af; font-size: 0.625rem;">vs last week</span>
+                        </div>
+                    </div>
+                    <!-- GSC Stats -->
+                    <div style="background: #ffffff; border-radius: 1rem; padding: 1.25rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#ea4335">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: #374151;">Search Console</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div>
+                                <p style="font-size: 1.25rem; font-weight: 700; color: #1a1a1a;">1,249</p>
+                                <p style="font-size: 0.625rem; color: #6b7280;">Clicks</p>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.25rem; font-weight: 700; color: #1a1a1a;">45.2K</p>
+                                <p style="font-size: 0.625rem; color: #6b7280;">Impressions</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.25rem;">
+                            <span style="color: #10b981; font-size: 0.75rem; font-weight: 600;">↑ 8.3%</span>
+                            <span style="color: #9ca3af; font-size: 0.625rem;">CTR improvement</span>
+                        </div>
+                    </div>
+                    <!-- PageSpeed Score -->
+                    <div style="background: #ffffff; border-radius: 1rem; padding: 1.25rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fbbc04">
+                                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: #374151;">PageSpeed</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div>
+                                <p style="font-size: 1.25rem; font-weight: 700; color: #10b981;">92</p>
+                                <p style="font-size: 0.625rem; color: #6b7280;">Mobile Score</p>
+                            </div>
+                            <div>
+                                <p style="font-size: 1.25rem; font-weight: 700; color: #10b981;">98</p>
+                                <p style="font-size: 0.625rem; color: #6b7280;">Desktop Score</p>
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.25rem;">
+                            <span style="color: #10b981; font-size: 0.75rem; font-weight: 600;">✓ Passing</span>
+                            <span style="color: #9ca3af; font-size: 0.625rem;">Core Web Vitals</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align: center; color: var(--color-text-muted); font-size: 0.875rem; margin-top: 1.5rem;">
+                ↑ This is what your dashboard will look like
+            </p>
         </div>
     </section>
 
@@ -1023,8 +1279,20 @@
                                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
-                    <h3>Real browser screenshots</h3>
-                    <p>Automatically captures what your site actually looks like, not just if it's "up"</p>
+                    <h3>Daily Screenshots</h3>
+                    <p>Twice-daily browser screenshots capture exactly what your site looks like—visual proof it's
+                        working</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3>PageSpeed Insights</h3>
+                    <p>Google PageSpeed scores for mobile & desktop. Track performance, Core Web Vitals, and
+                        optimization tips</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -1033,8 +1301,9 @@
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                     </div>
-                    <h3>Google Analytics (GA4)</h3>
-                    <p>See your traffic, visitors, and page views right alongside your screenshots</p>
+                    <h3>Google Analytics 4</h3>
+                    <p>Your GA4 data in one view—visitors, page views, sessions, bounce rate, and traffic trends over
+                        time</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -1044,17 +1313,75 @@
                         </svg>
                     </div>
                     <h3>Search Console</h3>
-                    <p>Track your search performance—clicks, impressions, and rankings</p>
+                    <p>Track your Google search performance—clicks, impressions, CTR, average position, and top queries
+                    </p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Stats / Value Props -->
+    <section class="section" style="background: #000; color: white; padding: 3rem 0;">
+        <div class="container">
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                <!-- Stat 1 -->
+                <div
+                    style="background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 1.5rem; text-align: center;">
+                    <div
+                        style="width: 48px; height: 48px; background: linear-gradient(135deg, #EE314F 0%, #ff6b7a 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <div class="stat-number" style="font-size: 2.5rem; font-weight: 800; color: white; line-height: 1;">
+                        2x</div>
+                    <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem;">Daily
+                        Screenshots</div>
+                </div>
+                <!-- Stat 2 -->
+                <div
+                    style="background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 1.5rem; text-align: center;">
+                    <div
+                        style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981 0%, #34d399 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <h3>Visual history</h3>
-                    <p>See changes over time. Know exactly what happened and when</p>
+                    <div class="stat-number" style="font-size: 2.5rem; font-weight: 800; color: white; line-height: 1;">
+                        7</div>
+                    <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem;">Days of History
+                    </div>
+                </div>
+                <!-- Stat 3 -->
+                <div
+                    style="background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 1.5rem; text-align: center;">
+                    <div
+                        style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                        </svg>
+                    </div>
+                    <div class="stat-number" style="font-size: 2.5rem; font-weight: 800; color: white; line-height: 1;">
+                        4-in-1</div>
+                    <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem;">Dashboard</div>
+                </div>
+                <!-- Stat 4 -->
+                <div
+                    style="background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 1.5rem; text-align: center;">
+                    <div
+                        style="width: 48px; height: 48px; background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </div>
+                    <div class="stat-number" style="font-size: 2.5rem; font-weight: 800; color: white; line-height: 1;">
+                        0</div>
+                    <div style="font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem;">Code Required
+                    </div>
                 </div>
             </div>
         </div>
@@ -1113,41 +1440,176 @@
         <div class="container">
             <div class="section-header">
                 <h2>How it works</h2>
-                <p>Three simple steps. No technical setup required.</p>
+                <p>Get started in 3 simple steps</p>
             </div>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Add your website</h3>
-                    <p>Just enter your domain. That's it.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                <!-- Step 1 -->
+                <div
+                    style="background: white; border-radius: 1.25rem; padding: 2rem; border: 1px solid var(--color-border); position: relative;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: #EE314F; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.125rem; font-weight: 700; color: white;">
+                            1</div>
+                        <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--color-text); margin: 0;">Add your
+                            website</h3>
+                    </div>
+                    <p style="font-size: 0.9375rem; color: var(--color-text-muted); line-height: 1.6; margin: 0;">Enter
+                        your domain URL. We start capturing screenshots and running PageSpeed tests immediately.</p>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Connect Google services</h3>
-                    <p>Link your Analytics and Search Console with one click</p>
+                <!-- Step 2 -->
+                <div
+                    style="background: white; border-radius: 1.25rem; padding: 2rem; border: 1px solid var(--color-border); position: relative;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: #3b82f6; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.125rem; font-weight: 700; color: white;">
+                            2</div>
+                        <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--color-text); margin: 0;">Connect
+                            Google</h3>
+                    </div>
+                    <p style="font-size: 0.9375rem; color: var(--color-text-muted); line-height: 1.6; margin: 0;">
+                        One-click OAuth to link your Analytics 4 and Search Console. Read-only access, completely
+                        secure.</p>
                 </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Let it run</h3>
-                    <p>WebProofing automatically captures screenshots and data over time</p>
+                <!-- Step 3 -->
+                <div
+                    style="background: white; border-radius: 1.25rem; padding: 2rem; border: 1px solid var(--color-border); position: relative;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div
+                            style="width: 40px; height: 40px; background: #10b981; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.125rem; font-weight: 700; color: white;">
+                            3</div>
+                        <h3 style="font-size: 1.125rem; font-weight: 700; color: var(--color-text); margin: 0;">Done!
+                            Monitor daily</h3>
+                    </div>
+                    <p style="font-size: 0.9375rem; color: var(--color-text-muted); line-height: 1.6; margin: 0;">Sit
+                        back. Screenshots, PageSpeed scores, and analytics data sync automatically twice daily.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Who it's for -->
+    <!-- Who it's for - Expanded with use cases -->
     <section class="section">
         <div class="container">
             <div class="section-header">
                 <h2>Who it's for</h2>
                 <p>Built for people who manage websites and need peace of mind.</p>
             </div>
-            <div class="audience-grid">
+
+            <!-- Use Cases Grid -->
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <!-- Freelancer Use Case -->
+                <div
+                    style="background: white; border: 1px solid var(--color-border); border-radius: 1.25rem; padding: 2rem; transition: all 0.3s; position: relative; overflow: hidden;">
+                    <div
+                        style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #667eea, #764ba2);">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--color-text);">Freelancers</h3>
+                    </div>
+                    <p
+                        style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; margin-bottom: 1.25rem;">
+                        "My client called saying their site had been broken for 3 days. I had no proof it was working.
+                        Now I have daily screenshots to show them."
+                    </p>
+                    <div style="background: var(--color-bg-soft); border-radius: 0.75rem; padding: 1rem;">
+                        <p
+                            style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.5rem;">
+                            ✓ Perfect for:</p>
+                        <ul
+                            style="font-size: 0.8125rem; color: var(--color-text-muted); padding-left: 1rem; margin: 0;">
+                            <li>Client reporting & accountability</li>
+                            <li>Managing multiple sites</li>
+                            <li>Peace of mind while you sleep</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Agency Use Case -->
+                <div
+                    style="background: white; border: 1px solid var(--color-border); border-radius: 1.25rem; padding: 2rem; transition: all 0.3s; position: relative; overflow: hidden;">
+                    <div
+                        style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #f59e0b, #ef4444);">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                        </div>
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--color-text);">Agencies</h3>
+                    </div>
+                    <p
+                        style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; margin-bottom: 1.25rem;">
+                        "We manage 50+ client sites. Before WebProofing, we'd only know about issues when clients
+                        complained. Now we catch problems before they do."
+                    </p>
+                    <div style="background: var(--color-bg-soft); border-radius: 0.75rem; padding: 1rem;">
+                        <p
+                            style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.5rem;">
+                            ✓ Perfect for:</p>
+                        <ul
+                            style="font-size: 0.8125rem; color: var(--color-text-muted); padding-left: 1rem; margin: 0;">
+                            <li>Proactive client management</li>
+                            <li>Visual proof for SLAs</li>
+                            <li>Centralized monitoring dashboard</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SEO Pro Use Case -->
+                <div
+                    style="background: white; border: 1px solid var(--color-border); border-radius: 1.25rem; padding: 2rem; transition: all 0.3s; position: relative; overflow: hidden;">
+                    <div
+                        style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #10b981, #3b82f6);">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </div>
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--color-text);">SEO Professionals
+                        </h3>
+                    </div>
+                    <p
+                        style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; margin-bottom: 1.25rem;">
+                        "I need to see both the visual state and the search performance together. When rankings drop, I
+                        can see exactly what changed on the site."
+                    </p>
+                    <div style="background: var(--color-bg-soft); border-radius: 0.75rem; padding: 1rem;">
+                        <p
+                            style="font-size: 0.8125rem; font-weight: 600; color: var(--color-text); margin-bottom: 0.5rem;">
+                            ✓ Perfect for:</p>
+                        <ul
+                            style="font-size: 0.8125rem; color: var(--color-text-muted); padding-left: 1rem; margin: 0;">
+                            <li>Correlating visual changes with rankings</li>
+                            <li>GA4 + GSC data in one place</li>
+                            <li>Quick client status checks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="audience-grid" style="margin-top: 2rem;">
                 <span class="audience-tag">Freelancers</span>
                 <span class="audience-tag">Agencies</span>
                 <span class="audience-tag">SEO professionals</span>
                 <span class="audience-tag">Website owners</span>
                 <span class="audience-tag">Developers</span>
+                <span class="audience-tag">E-commerce stores</span>
+                <span class="audience-tag">Marketing teams</span>
             </div>
         </div>
     </section>
@@ -1230,7 +1692,7 @@
                                     d="M5 13l4 4L19 7" />
                             </svg>
                             <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">Twice Daily
-                                Automated Screenshots</span>
+                                Screenshots</span>
                         </div>
                         <div class="feature-item" style="padding: 0; align-items: center;">
                             <svg class="feature-icon-check" style="color: #10b981; width: 1.5rem; height: 1.5rem;"
@@ -1238,7 +1700,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M5 13l4 4L19 7" />
                             </svg>
-                            <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">Full Google
+                            <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">PageSpeed
+                                Insights (Mobile & Desktop)</span>
+                        </div>
+                        <div class="feature-item" style="padding: 0; align-items: center;">
+                            <svg class="feature-icon-check" style="color: #10b981; width: 1.5rem; height: 1.5rem;"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">Google
                                 Analytics 4 Data</span>
                         </div>
                         <div class="feature-item" style="padding: 0; align-items: center;">
@@ -1248,7 +1719,7 @@
                                     d="M5 13l4 4L19 7" />
                             </svg>
                             <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">Search Console
-                                Performance Tracking</span>
+                                Performance</span>
                         </div>
                         <div class="feature-item" style="padding: 0; align-items: center;">
                             <svg class="feature-icon-check" style="color: #10b981; width: 1.5rem; height: 1.5rem;"
@@ -1256,12 +1727,15 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M5 13l4 4L19 7" />
                             </svg>
-                            <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">Visual Uptime
-                                Proof History</span>
+                            <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">7-Day Visual
+                                History</span>
                         </div>
                     </div>
 
-                    <!-- Button removed as per user request -->
+                    <a href="{{ route('register') }}" class="btn btn-primary"
+                        style="width: 100%; padding: 1rem; font-size: 1.125rem; margin-top: 1rem;">
+                        Start 7-Day Free Trial
+                    </a>
 
                     <div class="guarantee-badge" style="margin-top: 1.25rem; opacity: 0.7;">
                         <span>✓ Cancel anytime • No credit card required</span>
@@ -1269,68 +1743,6 @@
                 </div>
             </div>
 
-            <!-- Poll Section -->
-            <div class="feedback-card"
-                style="margin-top: 6rem; background: #ffffff; border: 1px solid var(--color-border); border-radius: 2rem; padding: 3.5rem 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
-                <div style="text-align: center; margin-bottom: 3rem;">
-                    <h3 class="feedback-title" style="font-size: 1.75rem; margin-bottom: 0.75rem;">Is this pricing right
-                        for you?</h3>
-                    <p class="feedback-subtitle" style="font-size: 1rem; color: var(--color-text-muted);">We are
-                        building WebProofing for YOU. Tell us what you think.</p>
-                </div>
-
-                @if(session('success'))
-                    <div class="alert alert-success" style="max-width: 500px; margin: 0 auto 2rem;">
-                        ✓ {{ session('success') }}
-                    </div>
-                @endif
-
-                <form action="{{ route('pricing.feedback') }}" method="POST" style="max-width: 600px; margin: 0 auto;">
-                    @csrf
-
-                    <div class="opinion-grid" style="gap: 1.25rem; margin-bottom: 2.5rem;">
-                        <label class="opinion-option">
-                            <input type="radio" name="price_opinion" value="too_expensive">
-                            <div class="opinion-label" style="padding: 1.5rem 1rem; border-radius: 1.25rem;">
-                                <span class="opinion-emoji" style="font-size: 2.5rem;">💸</span>
-                                <span class="opinion-text" style="margin-top: 0.5rem; font-weight: 700;">Too High</span>
-                            </div>
-                        </label>
-
-                        <label class="opinion-option">
-                            <input type="radio" name="price_opinion" value="fair">
-                            <div class="opinion-label" style="padding: 1.5rem 1rem; border-radius: 1.25rem;">
-                                <span class="opinion-emoji" style="font-size: 2.5rem;">✅</span>
-                                <span class="opinion-text" style="margin-top: 0.5rem; font-weight: 700;">Fair
-                                    Price</span>
-                            </div>
-                        </label>
-
-                        <label class="opinion-option">
-                            <input type="radio" name="price_opinion" value="good_deal">
-                            <div class="opinion-label" style="padding: 1.5rem 1rem; border-radius: 1.25rem;">
-                                <span class="opinion-emoji" style="font-size: 2.5rem;">💎</span>
-                                <span class="opinion-text" style="margin-top: 0.5rem; font-weight: 700;">Steal!</span>
-                            </div>
-                        </label>
-                    </div>
-
-                    <div style="margin-bottom: 2.5rem;">
-                        <label for="suggestion" class="feedback-label"
-                            style="font-size: 0.9375rem; color: var(--color-text); margin-bottom: 0.75rem;">What
-                            features are we missing?</label>
-                        <textarea name="suggestion" id="suggestion" class="feedback-textarea"
-                            style="border-radius: 1rem; padding: 1.25rem; min-height: 120px;"
-                            placeholder="I would pay more if WebProofing could..."></textarea>
-                    </div>
-
-                    <div style="text-align: center;">
-                        <button type="submit" class="feedback-submit"
-                            style="background: var(--color-accent); border-radius: 99px; padding: 1rem 3rem; font-weight: 700; font-size: 1rem; width: 100%;">Submit
-                            Feedback</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </section>
 
@@ -1370,9 +1782,199 @@
                     <p>Automated email digests. Get weekly summaries of your website's health, screenshots, and
                         analytics delivered to your inbox.</p>
                 </div>
+                <div class="feature-card" style="position: relative; opacity: 0.85; border-style: dashed;">
+                    <span
+                        style="position: absolute; top: 1rem; right: 1rem; padding: 0.25rem 0.75rem; background: #f3f4f6; border-radius: 2rem; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">Coming
+                        Soon</span>
+                    <div class="feature-icon" style="background: #f3f4f6;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #6b7280;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                        </svg>
+                    </div>
+                    <h3>Google Ads Integration</h3>
+                    <p>Track your ad campaigns alongside organic performance. See spend, clicks, conversions, and ROAS
+                        in one unified view.</p>
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- FAQ Section -->
+    <section class="section" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Everything you need to know about WebProofing</p>
+            </div>
+
+            <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item" style="border-bottom: 1px solid var(--color-border);">
+                    <button class="faq-question" onclick="toggleFaq(this)"
+                        style="width: 100%; padding: 1.25rem 0; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+                        <span style="font-size: 1rem; font-weight: 600; color: var(--color-text);">What exactly does
+                            WebProofing do?</span>
+                        <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            style="transition: transform 0.3s; flex-shrink: 0; color: var(--color-text-muted);">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <p
+                            style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; padding-bottom: 1.25rem;">
+                            WebProofing captures <strong>daily screenshots</strong>, runs <strong>PageSpeed
+                                tests</strong>, and connects your <strong>Google Analytics 4</strong> and <strong>Search
+                                Console</strong> data. Everything you need to monitor your website's health in one
+                            unified dashboard.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item" style="border-bottom: 1px solid var(--color-border);">
+                    <button class="faq-question" onclick="toggleFaq(this)"
+                        style="width: 100%; padding: 1.25rem 0; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+                        <span style="font-size: 1rem; font-weight: 600; color: var(--color-text);">How is this different
+                            from uptime monitoring?</span>
+                        <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            style="transition: transform 0.3s; flex-shrink: 0; color: var(--color-text-muted);">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <p
+                            style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; padding-bottom: 1.25rem;">
+                            Uptime tools only check if your site returns a 200 status—they can't see if your homepage is
+                            blank or layout is broken. WebProofing uses a real browser to capture what your site
+                            <em>actually looks like</em>, plus measures PageSpeed performance.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item" style="border-bottom: 1px solid var(--color-border);">
+                    <button class="faq-question" onclick="toggleFaq(this)"
+                        style="width: 100%; padding: 1.25rem 0; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+                        <span style="font-size: 1rem; font-weight: 600; color: var(--color-text);">Do I need to install
+                            anything on my website?</span>
+                        <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            style="transition: transform 0.3s; flex-shrink: 0; color: var(--color-text-muted);">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <p
+                            style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; padding-bottom: 1.25rem;">
+                            <strong>No installation required.</strong> Just add your website URL and we start capturing
+                            screenshots and PageSpeed data immediately. For GA4 and Search Console, connect your Google
+                            account with one click.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item" style="border-bottom: 1px solid var(--color-border);">
+                    <button class="faq-question" onclick="toggleFaq(this)"
+                        style="width: 100%; padding: 1.25rem 0; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+                        <span style="font-size: 1rem; font-weight: 600; color: var(--color-text);">What data do you
+                            track?</span>
+                        <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            style="transition: transform 0.3s; flex-shrink: 0; color: var(--color-text-muted);">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <p
+                            style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; padding-bottom: 1.25rem;">
+                            <strong>Screenshots:</strong> Twice-daily visual captures. <strong>PageSpeed:</strong>
+                            Mobile & desktop scores, Core Web Vitals. <strong>GA4:</strong> Visitors, page views,
+                            sessions, bounce rate. <strong>Search Console:</strong> Clicks, impressions, CTR, rankings,
+                            top queries.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item" style="border-bottom: 1px solid var(--color-border);">
+                    <button class="faq-question" onclick="toggleFaq(this)"
+                        style="width: 100%; padding: 1.25rem 0; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+                        <span style="font-size: 1rem; font-weight: 600; color: var(--color-text);">Can I monitor
+                            multiple websites?</span>
+                        <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            style="transition: transform 0.3s; flex-shrink: 0; color: var(--color-text-muted);">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <p
+                            style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; padding-bottom: 1.25rem;">
+                            Yes! Add as many sites as you need. Each site is <strong>$9.99/month</strong> with all
+                            features included. Perfect for agencies and freelancers managing multiple client sites from
+                            one dashboard.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)"
+                        style="width: 100%; padding: 1.25rem 0; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+                        <span style="font-size: 1rem; font-weight: 600; color: var(--color-text);">Can I try before I
+                            pay?</span>
+                        <svg class="faq-icon" width="20" height="20" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            style="transition: transform 0.3s; flex-shrink: 0; color: var(--color-text-muted);">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <p
+                            style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; padding-bottom: 1.25rem;">
+                            Absolutely! We offer a <strong>7-day free trial</strong> with no credit card required. Test
+                            all features—screenshots, PageSpeed, GA4, and Search Console—before committing.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Still have questions -->
+            <div
+                style="text-align: center; margin-top: 3rem; padding: 2rem; background: var(--color-bg-soft); border-radius: 1.25rem;">
+                <p style="font-size: 1rem; color: var(--color-text); font-weight: 600; margin-bottom: 0.5rem;">Still
+                    have questions?</p>
+                <p style="color: var(--color-text-muted); font-size: 0.9375rem;">
+                    Reach out anytime at <a href="mailto:atifjan2019@gmail.com"
+                        style="color: var(--color-accent); text-decoration: none; font-weight: 500;">atifjan2019@gmail.com</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function toggleFaq(button) {
+            const item = button.parentElement;
+            const answer = item.querySelector('.faq-answer');
+            const icon = button.querySelector('.faq-icon');
+            const isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+
+            // Close all other FAQs
+            document.querySelectorAll('.faq-answer').forEach(a => a.style.maxHeight = '0px');
+            document.querySelectorAll('.faq-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+
+            if (!isOpen) {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
 
     <!-- Early product notice -->
     <section class="section">
