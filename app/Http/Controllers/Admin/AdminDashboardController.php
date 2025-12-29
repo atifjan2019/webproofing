@@ -224,4 +224,19 @@ class AdminDashboardController extends Controller
 
         return back()->with('success', "Services updated for user '{$user->email}'.");
     }
+
+    /**
+     * Impersonate a user.
+     */
+    public function impersonate(User $user)
+    {
+        if ($user->is_super_admin) {
+            return back()->with('error', 'Cannot impersonate a super admin.');
+        }
+
+        // Log in as the user
+        \Illuminate\Support\Facades\Auth::login($user);
+
+        return redirect()->route('dashboard')->with('success', "You are now logged in as {$user->name}");
+    }
 }

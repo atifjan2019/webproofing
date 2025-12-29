@@ -110,6 +110,7 @@ Route::middleware(['auth', 'super.admin'])->prefix('admin')->name('admin.')->gro
     Route::get('/sites', [App\Http\Controllers\Admin\AdminDashboardController::class, 'sites'])->name('sites');
     Route::post('/sites/{site}/pause', [App\Http\Controllers\Admin\AdminDashboardController::class, 'pauseSite'])->name('sites.pause');
     Route::post('/sites/{site}/resume', [App\Http\Controllers\Admin\AdminDashboardController::class, 'resumeSite'])->name('sites.resume');
+    Route::post('/users/{user}/impersonate', [App\Http\Controllers\Admin\AdminDashboardController::class, 'impersonate'])->name('users.impersonate');
 });
 
 require __DIR__ . '/auth.php';
