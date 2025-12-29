@@ -208,7 +208,10 @@ class GoogleSearchConsoleService
     /**
      * Fetch top search queries from GSC.
      */
-    public function fetchGscQueries(User $user, string $siteUrl, string $startDate, string $endDate, int $limit = 20, array $filters = []): ?array
+    /**
+     * Fetch top search queries from GSC with optional comparison.
+     */
+    public function fetchGscQueries(User $user, string $siteUrl, string $startDate, string $endDate, int $limit = 20, array $filters = [], ?string $compareStartDate = null, ?string $compareEndDate = null): ?array
     {
         $accessToken = $this->tokenManager->getValidAccessToken($user);
 
@@ -219,6 +222,7 @@ class GoogleSearchConsoleService
         try {
             $encodedSiteUrl = urlencode($siteUrl);
 
+            // 1. Fetch Current Period Data
             $requestBody = [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
@@ -253,20 +257,81 @@ class GoogleSearchConsoleService
                 return null;
             }
 
-            $data = $response->json();
-            $queries = [];
+            $currentData = $response->json()['rows'] ?? [];
 
-            foreach ($data['rows'] ?? [] as $row) {
+            // 2. Fetch Comparison Period Data (if requested)
+            $compareDataMap = [];
+            if ($compareStartDate && $compareEndDate) {
+                // Fetch more rows to increase match rate
+                $compareRequestBody = [
+                    'startDate' => $compareStartDate,
+                    'endDate' => $compareEndDate,
+                    'dimensions' => ['query'],
+                    'rowLimit' => $limit * 2,
+                    'dataState' => 'all',
+                ];
+
+                // Apply same filters to comparison request
+                if (!empty($filters)) {
+                    $compareRequestBody['dimensionFilterGroups'] = $requestBody['dimensionFilterGroups'];
+                }
+
+                $compareResponse = Http::withToken($accessToken)
+                    ->post(config('google.gsc_api_base') . "/sites/{$encodedSiteUrl}/searchAnalytics/query", $compareRequestBody);
+
+                if ($compareResponse->successful()) {
+                    $compareRows = $compareResponse->json()['rows'] ?? [];
+                    foreach ($compareRows as $row) {
+                        $term = $row['keys'][0] ?? null;
+                        if ($term) {
+                            $compareDataMap[$term] = [
+                                'clicks' => (int) ($row['clicks'] ?? 0),
+                                'impressions' => (int) ($row['impressions'] ?? 0),
+                            ];
+                        }
+                    }
+                }
+            }
+
+            // 3. Merge and Format Data
+            $queries = [];
+            foreach ($currentData as $row) {
                 $query = $row['keys'][0] ?? null;
 
                 if ($query) {
-                    $queries[] = [
+                    $clicks = (int) ($row['clicks'] ?? 0);
+                    $impressions = (int) ($row['impressions'] ?? 0);
+
+                    $growthData = [];
+                    if ($compareStartDate && $compareEndDate) {
+                        // Even if map is empty, we must indicate we TRIED comparison
+                        $prevClicks = $compareDataMap[$query]['clicks'] ?? 0;
+                        $prevImpressions = $compareDataMap[$query]['impressions'] ?? 0;
+
+                        // Clicks Growth
+                        if ($prevClicks > 0) {
+                            $growthData['clicks_growth'] = round((($clicks - $prevClicks) / $prevClicks) * 100);
+                        } else {
+                            $growthData['clicks_growth'] = $clicks > 0 ? 100 : 0;
+                        }
+
+                        // Impressions Growth
+                        if ($prevImpressions > 0) {
+                            $growthData['impressions_growth'] = round((($impressions - $prevImpressions) / $prevImpressions) * 100);
+                        } else {
+                            $growthData['impressions_growth'] = $impressions > 0 ? 100 : 0;
+                        }
+
+                        $growthData['prev_clicks'] = $prevClicks;
+                    }
+
+                    $queries[] = array_merge([
                         'query' => $query,
-                        'clicks' => (int) ($row['clicks'] ?? 0),
-                        'impressions' => (int) ($row['impressions'] ?? 0),
+                        'clicks' => $clicks,
+                        'impressions' => $impressions,
                         'ctr' => (float) ($row['ctr'] ?? 0),
                         'position' => round((float) ($row['position'] ?? 0), 1),
-                    ];
+                    ], $growthData);
                 }
             }
 
@@ -283,7 +348,10 @@ class GoogleSearchConsoleService
     /**
      * Fetch top pages from GSC.
      */
-    public function fetchGscPages(User $user, string $siteUrl, string $startDate, string $endDate, int $limit = 20): ?array
+    /**
+     * Fetch top pages from GSC with optional comparison data.
+     */
+    public function fetchGscPages(User $user, string $siteUrl, string $startDate, string $endDate, int $limit = 20, ?string $compareStartDate = null, ?string $compareEndDate = null): ?array
     {
         $accessToken = $this->tokenManager->getValidAccessToken($user);
 
@@ -294,6 +362,7 @@ class GoogleSearchConsoleService
         try {
             $encodedSiteUrl = urlencode($siteUrl);
 
+            // 1. Fetch Current Period Data
             $requestBody = [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
@@ -314,24 +383,80 @@ class GoogleSearchConsoleService
                 return null;
             }
 
-            $data = $response->json();
-            $pages = [];
+            $currentData = $response->json()['rows'] ?? [];
 
-            foreach ($data['rows'] ?? [] as $row) {
+            // 2. Fetch Comparison Period Data (if requested)
+            $compareDataMap = [];
+            if ($compareStartDate && $compareEndDate) {
+                // We fetch more rows for comparison to ensure we find matches for the top current pages
+                $compareRequestBody = [
+                    'startDate' => $compareStartDate,
+                    'endDate' => $compareEndDate,
+                    'dimensions' => ['page'],
+                    'rowLimit' => $limit * 2, // Fetch more to increase hit rate
+                    'dataState' => 'all',
+                ];
+
+                $compareResponse = Http::withToken($accessToken)
+                    ->post(config('google.gsc_api_base') . "/sites/{$encodedSiteUrl}/searchAnalytics/query", $compareRequestBody);
+
+                if ($compareResponse->successful()) {
+                    $compareRows = $compareResponse->json()['rows'] ?? [];
+                    foreach ($compareRows as $row) {
+                        $page = $row['keys'][0] ?? null;
+                        if ($page) {
+                            $compareDataMap[$page] = [
+                                'clicks' => (int) ($row['clicks'] ?? 0),
+                                'impressions' => (int) ($row['impressions'] ?? 0),
+                            ];
+                        }
+                    }
+                }
+            }
+
+            // 3. Merge and Format Data
+            $pages = [];
+            foreach ($currentData as $row) {
                 $page = $row['keys'][0] ?? null;
 
                 if ($page) {
-                    $pages[] = [
+                    $clicks = (int) ($row['clicks'] ?? 0);
+                    $impressions = (int) ($row['impressions'] ?? 0);
+
+                    $growthData = [];
+                    if (!empty($compareDataMap)) {
+                        $prevClicks = $compareDataMap[$page]['clicks'] ?? 0;
+                        $prevImpressions = $compareDataMap[$page]['impressions'] ?? 0;
+
+                        // Clicks Growth
+                        if ($prevClicks > 0) {
+                            $growthData['clicks_growth'] = round((($clicks - $prevClicks) / $prevClicks) * 100);
+                        } else {
+                            $growthData['clicks_growth'] = $clicks > 0 ? 100 : 0; // New page or huge growth
+                        }
+
+                        // Impressions Growth
+                        if ($prevImpressions > 0) {
+                            $growthData['impressions_growth'] = round((($impressions - $prevImpressions) / $prevImpressions) * 100);
+                        } else {
+                            $growthData['impressions_growth'] = $impressions > 0 ? 100 : 0;
+                        }
+
+                        $growthData['prev_clicks'] = $prevClicks;
+                    }
+
+                    $pages[] = array_merge([
                         'page' => $page,
-                        'clicks' => (int) ($row['clicks'] ?? 0),
-                        'impressions' => (int) ($row['impressions'] ?? 0),
+                        'clicks' => $clicks,
+                        'impressions' => $impressions,
                         'ctr' => (float) ($row['ctr'] ?? 0),
                         'position' => round((float) ($row['position'] ?? 0), 1),
-                    ];
+                    ], $growthData);
                 }
             }
 
             return $pages;
+
         } catch (\Exception $e) {
             Log::error('Exception while fetching GSC pages', [
                 'user_id' => $user->id,

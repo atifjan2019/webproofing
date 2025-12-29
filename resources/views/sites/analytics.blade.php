@@ -318,7 +318,8 @@
                             <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>Query</th>
+                                        <th style="min-width: 150px;">Query</th>
+                                        <th>Trend</th>
                                         <th class="text-right">Clicks</th>
                                         <th class="text-right">Impressions</th>
                                         <th class="text-right">CTR</th>
@@ -330,6 +331,29 @@
                                         <tr>
                                             <td>
                                                 <span class="font-medium" x-text="q.query"></span>
+                                            </td>
+                                            <td>
+                                                <div class="flex items-center gap-xs"
+                                                    x-show="q.clicks_growth !== undefined">
+                                                    <span class="text-xs font-semibold"
+                                                        :class="q.clicks_growth > 0 ? 'text-success' : (q.clicks_growth < 0 ? 'text-danger' : 'text-muted')"
+                                                        x-text="q.clicks_growth > 0 ? '+' + q.clicks_growth + '%' : q.clicks_growth + '%'">
+                                                    </span>
+                                                    <svg x-show="q.clicks_growth > 0" class="w-3 h-3 text-success"
+                                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                                    </svg>
+                                                    <svg x-show="q.clicks_growth < 0" class="w-3 h-3 text-danger"
+                                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                                                    </svg>
+                                                    <span x-show="q.prev_clicks === 0 && q.clicks > 0"
+                                                        class="text-xs px-1.5 py-0.5 rounded bg-success-light text-success">New</span>
+                                                </div>
+                                                <span x-show="q.clicks_growth === undefined"
+                                                    class="text-xs text-muted">-</span>
                                             </td>
                                             <td class="text-right" x-text="formatNumber(q.clicks)"></td>
                                             <td class="text-right" x-text="formatNumber(q.impressions)"></td>
@@ -381,6 +405,7 @@
                                             <span x-show="pagesSortCol === 'page'"
                                                 x-text="pagesSortAsc ? '↑' : '↓'"></span>
                                         </th>
+                                        <th></th>
                                         <th class="text-right cursor-pointer hover:bg-gray-50"
                                             @click="sortPages('clicks')">
                                             Clicks

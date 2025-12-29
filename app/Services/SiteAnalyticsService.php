@@ -79,24 +79,46 @@ class SiteAnalyticsService
 
             // Fetch top queries WITH filters
             if (in_array('all', $types) || in_array('queries', $types)) {
+                // Calculate comparison dates if not already done (for queries too)
+                if (!isset($compareStartDate)) {
+                    $start = \Carbon\Carbon::parse($startDate);
+                    $end = \Carbon\Carbon::parse($endDate);
+                    $days = $start->diffInDays($end) + 1;
+
+                    $compareEndDate = $start->copy()->subDay()->format('Y-m-d');
+                    $compareStartDate = $start->copy()->subDays($days)->format('Y-m-d');
+                }
+
                 $response['gsc_queries'] = $this->gscService->fetchGscQueries(
                     $user,
                     $site->gsc_site_url,
                     $startDate,
                     $endDate,
                     5000,
-                    $gscFilters
+                    $gscFilters,
+                    $compareStartDate,
+                    $compareEndDate
                 );
             }
 
-            // Fetch top pages
+            // Fetch top pages with comparison data
             if (in_array('all', $types) || in_array('pages', $types)) {
+                // Calculate comparison dates (same duration, immediately preceding)
+                $start = \Carbon\Carbon::parse($startDate);
+                $end = \Carbon\Carbon::parse($endDate);
+                $days = $start->diffInDays($end) + 1;
+
+                $compareEndDate = $start->copy()->subDay()->format('Y-m-d');
+                $compareStartDate = $start->copy()->subDays($days)->format('Y-m-d');
+
                 $response['gsc_pages'] = $this->gscService->fetchGscPages(
                     $user,
                     $site->gsc_site_url,
                     $startDate,
                     $endDate,
-                    25000
+                    20,
+                    $compareStartDate, // Pass comparison start
+                    $compareEndDate    // Pass comparison end
                 );
             }
         }
