@@ -466,4 +466,65 @@ class GoogleSearchConsoleService
             return null;
         }
     }
+
+    /**
+     * Fetch top countries from GSC.
+     */
+    public function fetchGscCountries(User $user, string $siteUrl, string $startDate, string $endDate, int $limit = 10): ?array
+    {
+        $accessToken = $this->tokenManager->getValidAccessToken($user);
+
+        if (!$accessToken) {
+            return null;
+        }
+
+        try {
+            $encodedSiteUrl = urlencode($siteUrl);
+
+            $response = Http::withToken($accessToken)
+                ->post(config('google.gsc_api_base') . "/sites/{$encodedSiteUrl}/searchAnalytics/query", [
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                    'dimensions' => ['country'],
+                    'rowLimit' => $limit,
+                    'dataState' => 'all',
+                ]);
+
+            if (!$response->successful()) {
+                Log::error('Failed to fetch GSC countries', [
+                    'user_id' => $user->id,
+                    'site_url' => $siteUrl,
+                    'status' => $response->status(),
+                ]);
+                return null;
+            }
+
+            $data = $response->json();
+            $countries = [];
+
+            foreach ($data['rows'] ?? [] as $row) {
+                $countryCode = $row['keys'][0] ?? null; // GSC returns 'usa', 'gbr', etc. or ISO codes? usually ISO-3 lower or ISO-2.
+                // Actually GSC API returns ISO 3166-1 alpha-3 code (e.g. USA, GBR) usually. 
+                // Let's just return what it gives for now.
+
+                if ($countryCode) {
+                    $countries[] = [
+                        'country' => $countryCode,
+                        'clicks' => (int) ($row['clicks'] ?? 0),
+                        'impressions' => (int) ($row['impressions'] ?? 0),
+                        'ctr' => (float) ($row['ctr'] ?? 0),
+                    ];
+                }
+            }
+
+            return $countries;
+        } catch (\Exception $e) {
+            Log::error('Exception while fetching GSC countries', [
+                'user_id' => $user->id,
+                'site_url' => $siteUrl,
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
+    }
 }

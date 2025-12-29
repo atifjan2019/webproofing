@@ -269,6 +269,110 @@
                     </div>
                 </section>
 
+                <!-- Top Pages -->
+                <section class="card" x-show="hasGsc">
+                    <div class="card-body">
+                        <h3 class="font-semibold text-black mb-lg">Top Pages</h3>
+
+                        <div class="table-responsive" x-show="gscPages && gscPages.length > 0">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th @click="sortPages('page')" class="cursor-pointer hover:bg-gray-50">
+                                            Page
+                                            <span x-show="pagesSortCol === 'page'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                        <th>Trend</th>
+                                        <th class="text-right cursor-pointer hover:bg-gray-50"
+                                            @click="sortPages('clicks')">
+                                            Clicks
+                                            <span x-show="pagesSortCol === 'clicks'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                        <th class="text-right cursor-pointer hover:bg-gray-50"
+                                            @click="sortPages('impressions')">
+                                            Impressions
+                                            <span x-show="pagesSortCol === 'impressions'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                        <th class="text-right cursor-pointer hover:bg-gray-50"
+                                            @click="sortPages('ctr')">
+                                            CTR
+                                            <span x-show="pagesSortCol === 'ctr'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                        <th class="text-right cursor-pointer hover:bg-gray-50"
+                                            @click="sortPages('position')">
+                                            Position
+                                            <span x-show="pagesSortCol === 'position'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="(p, index) in paginatedPages" :key="index">
+                                        <tr>
+                                            <td class="truncate" style="max-width: 300px;" :title="p.page">
+                                                <a :href="p.page" target="_blank" class="text-primary hover:underline"
+                                                    x-text="p.page"></a>
+                                            </td>
+                                            <td>
+                                                <div class="flex items-center gap-xs"
+                                                    x-show="p.clicks_growth !== undefined">
+                                                    <span class="text-xs font-semibold"
+                                                        :class="p.clicks_growth > 0 ? 'text-success' : (p.clicks_growth < 0 ? 'text-danger' : 'text-muted')"
+                                                        x-text="p.clicks_growth > 0 ? '+' + p.clicks_growth + '%' : p.clicks_growth + '%'">
+                                                    </span>
+                                                    <svg x-show="p.clicks_growth > 0" class="w-3 h-3 text-success"
+                                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                                    </svg>
+                                                    <svg x-show="p.clicks_growth < 0" class="w-3 h-3 text-danger"
+                                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                                                    </svg>
+                                                    <span x-show="p.prev_clicks === 0 && p.clicks > 0"
+                                                        class="text-xs px-1.5 py-0.5 rounded bg-success-light text-success">New</span>
+                                                </div>
+                                                <span x-show="p.clicks_growth === undefined"
+                                                    class="text-xs text-muted">-</span>
+                                            </td>
+                                            <td class="text-right" x-text="formatNumber(p.clicks)"></td>
+                                            <td class="text-right" x-text="formatNumber(p.impressions)"></td>
+                                            <td class="text-right" x-text="formatPercent(p.ctr)"></td>
+                                            <td class="text-right" x-text="p.position"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination Controls -->
+                        <div class="flex items-center justify-between mt-md" x-show="sortedPages.length > pageSize">
+                            <div class="text-sm text-secondary">
+                                Showing <span x-text="(currentPage - 1) * pageSize + 1"></span> to <span
+                                    x-text="Math.min(currentPage * pageSize, sortedPages.length)"></span> of <span
+                                    x-text="sortedPages.length"></span>
+                            </div>
+                            <div class="flex gap-xs">
+                                <button @click="prevPage" :disabled="currentPage === 1" class="btn btn-secondary btn-sm"
+                                    :class="{'opacity-50 cursor-not-allowed': currentPage === 1}">Previous</button>
+                                <button @click="nextPage" :disabled="currentPage === totalPages"
+                                    class="btn btn-secondary btn-sm"
+                                    :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}">Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Insight Dashboard Summary -->
+                        <div x-show="!gscPages || gscPages.length === 0" class="text-center py-xl">
+                            <p class="text-muted">No pages found for this period.</p>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Top Search Queries -->
                 <section class="card" x-show="hasGsc">
                     <div class="card-body">
@@ -391,83 +495,105 @@
                     </div>
                 </section>
 
-                <!-- Top Pages -->
-                <section class="card" x-show="hasGsc">
-                    <div class="card-body">
-                        <h3 class="font-semibold text-black mb-lg">Top Pages</h3>
-
-                        <div class="table-responsive" x-show="gscPages && gscPages.length > 0">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th @click="sortPages('page')" class="cursor-pointer hover:bg-gray-50">
-                                            Page
-                                            <span x-show="pagesSortCol === 'page'"
-                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
-                                        </th>
-                                        <th></th>
-                                        <th class="text-right cursor-pointer hover:bg-gray-50"
-                                            @click="sortPages('clicks')">
-                                            Clicks
-                                            <span x-show="pagesSortCol === 'clicks'"
-                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
-                                        </th>
-                                        <th class="text-right cursor-pointer hover:bg-gray-50"
-                                            @click="sortPages('impressions')">
-                                            Impressions
-                                            <span x-show="pagesSortCol === 'impressions'"
-                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
-                                        </th>
-                                        <th class="text-right cursor-pointer hover:bg-gray-50"
-                                            @click="sortPages('ctr')">
-                                            CTR
-                                            <span x-show="pagesSortCol === 'ctr'"
-                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
-                                        </th>
-                                        <th class="text-right cursor-pointer hover:bg-gray-50"
-                                            @click="sortPages('position')">
-                                            Position
-                                            <span x-show="pagesSortCol === 'position'"
-                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <template x-for="(p, index) in paginatedPages" :key="index">
-                                        <tr>
-                                            <td class="truncate" style="max-width: 300px;" :title="p.page">
-                                                <a :href="p.page" target="_blank" class="text-primary hover:underline"
-                                                    x-text="p.page"></a>
-                                            </td>
-                                            <td class="text-right" x-text="formatNumber(p.clicks)"></td>
-                                            <td class="text-right" x-text="formatNumber(p.impressions)"></td>
-                                            <td class="text-right" x-text="formatPercent(p.ctr)"></td>
-                                            <td class="text-right" x-text="p.position"></td>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Pagination Controls -->
-                        <div class="flex items-center justify-between mt-md" x-show="sortedPages.length > pageSize">
-                            <div class="text-sm text-secondary">
-                                Showing <span x-text="(currentPage - 1) * pageSize + 1"></span> to <span
-                                    x-text="Math.min(currentPage * pageSize, sortedPages.length)"></span> of <span
-                                    x-text="sortedPages.length"></span>
+                <!-- Insights Dashboard -->
+                <section class="mt-xl" x-show="hasGsc">
+                    <h3 class="font-bold text-xl text-black mb-lg flex items-center gap-sm">
+                        Content Insights
+                    </h3>
+                    <div class="grid grid-cols-1 md-grid-cols-3 gap-lg">
+                        <!-- Top Growing Content -->
+                        <div class="card card-body">
+                            <div class="flex items-center gap-md mb-lg pb-sm border-b border-gray-100">
+                                <div class="p-xs rounded-lg bg-success-light text-success">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold text-base">Top Growing Content</h4>
                             </div>
-                            <div class="flex gap-xs">
-                                <button @click="prevPage" :disabled="currentPage === 1" class="btn btn-secondary btn-sm"
-                                    :class="{'opacity-50 cursor-not-allowed': currentPage === 1}">Previous</button>
-                                <button @click="nextPage" :disabled="currentPage === totalPages"
-                                    class="btn btn-secondary btn-sm"
-                                    :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}">Next</button>
+                            <div class="space-y-md">
+                                <template
+                                    x-for="p in gscPages.filter(x => x.clicks_growth > 0).sort((a,b) => b.clicks_growth - a.clicks_growth).slice(0, 5)">
+                                    <div class="flex justify-between items-start gap-sm">
+                                        <div class="flex-1 min-w-0">
+                                            <a :href="p.page" target="_blank"
+                                                class="block text-sm font-medium text-black truncate hover:text-accent transition-colors"
+                                                x-text="formatURL(p.page)"></a>
+                                            <div class="text-xs text-muted mt-xs"
+                                                x-text="formatNumber(p.clicks) + ' clicks'"></div>
+                                        </div>
+                                        <div class="badge badge-success flex-shrink-0"
+                                            x-text="'+' + p.clicks_growth + '%'"></div>
+                                    </div>
+                                </template>
+                                <div x-show="gscPages.filter(x => x.clicks_growth > 0).length === 0"
+                                    class="text-center py-md">
+                                    <p class="text-muted text-sm italic">No significant growth detected.</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Empty Pages State -->
-                        <div x-show="!gscPages || gscPages.length === 0" class="text-center py-xl">
-                            <p class="text-muted">No pages found for this period.</p>
+                        <!-- Trending Search Queries -->
+                        <div class="card card-body">
+                            <div class="flex items-center gap-md mb-lg pb-sm border-b border-gray-100">
+                                <div class="p-xs rounded-lg bg-accent-light text-accent">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold text-base">Trending Queries</h4>
+                            </div>
+                            <div class="space-y-md">
+                                <template
+                                    x-for="q in gscQueries.filter(x => x.clicks_growth > 0).sort((a,b) => b.clicks_growth - a.clicks_growth).slice(0, 5)">
+                                    <div class="flex justify-between items-start gap-sm">
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-sm font-medium text-black truncate" x-text="q.query"></div>
+                                            <div class="text-xs text-muted mt-xs"
+                                                x-text="formatNumber(q.clicks) + ' clicks'"></div>
+                                        </div>
+                                        <div class="badge badge-success flex-shrink-0"
+                                            x-text="'+' + q.clicks_growth + '%'"></div>
+                                    </div>
+                                </template>
+                                <div x-show="gscQueries.filter(x => x.clicks_growth > 0).length === 0"
+                                    class="text-center py-md">
+                                    <p class="text-muted text-sm italic">No trending queries detected.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Countries -->
+                        <div class="card card-body">
+                            <div class="flex items-center gap-md mb-lg pb-sm border-b border-gray-100">
+                                <div class="p-xs rounded-lg bg-info-light text-info">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h4 class="font-semibold text-base">Top Countries</h4>
+                            </div>
+                            <div class="space-y-md">
+                                <template x-for="c in gscCountries.slice(0, 5)" :key="c.country">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex items-center gap-sm">
+                                            <div class="font-bold text-sm text-black uppercase tracking-wider"
+                                                x-text="c.country"></div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-sm font-bold text-black"
+                                                x-text="formatNumber(c.clicks || 0)"></div>
+                                            <div class="text-xs text-muted">clicks</div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div x-show="!gscCountries || gscCountries.length === 0" class="text-center py-md">
+                                    <p class="text-muted text-sm italic">No country data available.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -482,7 +608,7 @@
         function dateFilter() {
             return {
                 currentPeriod: '7d',
-                loading: false, // shared state? No, this is separate x-data.
+                loading: false,
                 periods: [
                     { value: '24h', label: '24 Hours' },
                     { value: 'today', label: 'Today' },
@@ -538,6 +664,7 @@
                 dailyData: [],
                 gscQueries: [],
                 gscPages: [],
+                gscCountries: [],
 
                 // Pages Sorting & Pagination
                 pagesSortCol: 'clicks',
@@ -635,6 +762,7 @@
                             this.currentPage = 1;
 
                             this.gscPages = data.gsc_pages || [];
+                            this.gscCountries = data.gsc_countries || [];
 
                             // Wait for Alpine to update x-show visibility before rendering chart
                             this.$nextTick(() => {
@@ -745,20 +873,21 @@
                     return (val * 100).toFixed(1) + '%';
                 },
 
+                formatURL(url) {
+                    try {
+                        const parsed = new URL(url);
+                        return parsed.pathname;
+                    } catch (e) {
+                        return url;
+                    }
+                },
+
                 formatDiff(diff, isPercent = false) {
                     const prefix = diff.change > 0 ? '+' : '';
                     if (isPercent) {
-                        // For rates (e.g. CTR), change is absolute percentage points usually, but here diff logic returns percentage change of the value.
-                        // Let's stick to % change of the value
                         return `${prefix}${diff.pct.toFixed(1)}%`;
                     }
                     return `${prefix}${this.formatNumber(diff.change)} (${prefix}${diff.pct.toFixed(1)}%)`;
-                },
-
-                getColor(pct) {
-                    if (pct > 0) return 'text-success';
-                    if (pct < 0) return 'text-danger';
-                    return 'text-muted';
                 },
 
                 formatDateRange(range) {
@@ -772,20 +901,13 @@
                 formatTime(isoString) {
                     if (!isoString) return '';
                     const date = new Date(isoString);
-                    return date.toLocaleString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
+                    return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                 },
 
                 getLast7DaysData() {
                     if (!this.dailyData || this.dailyData.length === 0) return [];
                     // Sort by date descending (newest first) and take last 7
-                    return [...this.dailyData]
-                        .sort((a, b) => new Date(b.date) - new Date(a.date))
-                        .slice(0, 7);
+                    return [...this.dailyData].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 7);
                 },
 
                 formatTableDate(dateStr) {
@@ -813,9 +935,6 @@
                         this.pagesSortAsc = !this.pagesSortAsc;
                     } else {
                         this.pagesSortCol = col;
-                        // Default sort direction based on column type
-                        // Text columns (page) default to Asc
-                        // Numeric columns (clicks, imp, ctr) default to Desc
                         this.pagesSortAsc = (col === 'page');
                     }
                 },
@@ -847,9 +966,7 @@
                 },
 
                 nextPage() {
-                    if (this.currentPage < this.totalPages) {
-                        this.currentPage++;
-                    }
+                    if (this.currentPage < this.totalPages) { this.currentPage++; }
                 },
 
                 prevPage() {
@@ -870,9 +987,7 @@
                 },
 
                 nextQueriesPage() {
-                    if (this.queriesCurrentPage < this.queriesTotalPages) {
-                        this.queriesCurrentPage++;
-                    }
+                    if (this.queriesCurrentPage < this.queriesTotalPages) { this.queriesCurrentPage++; }
                 },
 
                 prevQueriesPage() {

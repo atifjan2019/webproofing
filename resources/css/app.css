@@ -3275,3 +3275,17 @@ nav[role="navigation"] span[aria-disabled="true"] span {
         font-size: var(--font-size-xs);
     }
 }
+/* Color Utilities */
+.bg-success-light { background-color: var(--color-success-light); }
+.bg-info-light { background-color: var(--color-info-light); }
+.bg-accent-light { background-color: var(--color-accent-light); }
+.bg-warning-light { background-color: var(--color-warning-light); }
+.bg-danger-light { background-color: var(--color-danger-light); }
+
+/* Radius Utilities */
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded { border-radius: var(--radius-md); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }

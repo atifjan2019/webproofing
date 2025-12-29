@@ -32,6 +32,7 @@ class SiteAnalyticsService
             'gsc' => null,
             'gsc_queries' => null,
             'gsc_pages' => null,
+            'gsc_countries' => null,
             'daily' => [],
             'cached_at' => now()->toIso8601String(),
         ];
@@ -119,6 +120,17 @@ class SiteAnalyticsService
                     20,
                     $compareStartDate, // Pass comparison start
                     $compareEndDate    // Pass comparison end
+                );
+            }
+
+            // Fetch top countries
+            if (in_array('all', $types) || in_array('countries', $types)) {
+                $response['gsc_countries'] = $this->gscService->fetchGscCountries(
+                    $user,
+                    $site->gsc_site_url,
+                    $startDate,
+                    $endDate,
+                    10
                 );
             }
         }
