@@ -189,6 +189,17 @@
                                         Configure Properties
                                     @endif
                                 </a>
+                                
+                                <form action="{{ route('sites.google.refresh', $site) }}" method="POST" class="mr-auto">
+                                    @csrf
+                                    <button type="submit" class="btn btn-secondary" title="Refresh connection data">
+                                        <svg class="icon-sm" style="margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                        Refresh
+                                    </button>
+                                </form>
+
                                 <div class="flex items-center gap-md">
                                     @if(!$hasRefreshToken)
                                         <a href="{{ route('google.connect') }}" class="btn btn-secondary">

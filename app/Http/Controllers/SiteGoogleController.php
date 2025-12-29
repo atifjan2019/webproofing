@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Site;
 use App\Services\Google\GoogleAnalyticsService;
 use App\Services\Google\GoogleSearchConsoleService;
+use App\Services\Google\GoogleTokenManager;
 use App\Services\TrialService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -104,5 +105,27 @@ class SiteGoogleController extends Controller
 
         return redirect()->route('sites.google', $site)
             ->with('success', 'Google services configured successfully.');
+    }
+    /**
+     * Refresh Google connection data.
+     */
+    public function refresh(Site $site, GoogleTokenManager $tokenManager)
+    {
+        // Ensure user owns the site
+        if ($site->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $user = Auth::user();
+        if ($user->googleAccount) {
+            // Force token refresh to ensure connection is valid
+            $tokenManager->refreshAccessToken($user->googleAccount);
+
+            // Note: Properties are fetched live in the configure page, so we don't need to clear any cache here.
+            // But confirming the token works is a good step.
+        }
+
+        return redirect()->route('sites.google', $site)
+            ->with('success', 'Google connection data refreshed.');
     }
 }

@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/sites/{site}/google', [SiteGoogleController::class, 'show'])->name('sites.google');
     Route::get('/sites/{site}/google/configure', [SiteGoogleController::class, 'configure'])->name('sites.google.configure');
     Route::post('/sites/{site}/google/configure', [SiteGoogleController::class, 'store'])->name('sites.google.store');
+    Route::post('/sites/{site}/google/refresh', [SiteGoogleController::class, 'refresh'])->name('sites.google.refresh');
 });
 
 // =============================================
