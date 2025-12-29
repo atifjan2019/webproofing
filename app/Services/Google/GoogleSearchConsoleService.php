@@ -280,4 +280,65 @@ class GoogleSearchConsoleService
             return null;
         }
     }
+    /**
+     * Fetch top pages from GSC.
+     */
+    public function fetchGscPages(User $user, string $siteUrl, string $startDate, string $endDate, int $limit = 20): ?array
+    {
+        $accessToken = $this->tokenManager->getValidAccessToken($user);
+
+        if (!$accessToken) {
+            return null;
+        }
+
+        try {
+            $encodedSiteUrl = urlencode($siteUrl);
+
+            $requestBody = [
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'dimensions' => ['page'],
+                'rowLimit' => $limit,
+                'dataState' => 'all',
+            ];
+
+            $response = Http::withToken($accessToken)
+                ->post(config('google.gsc_api_base') . "/sites/{$encodedSiteUrl}/searchAnalytics/query", $requestBody);
+
+            if (!$response->successful()) {
+                Log::error('Failed to fetch GSC pages', [
+                    'user_id' => $user->id,
+                    'site_url' => $siteUrl,
+                    'status' => $response->status(),
+                ]);
+                return null;
+            }
+
+            $data = $response->json();
+            $pages = [];
+
+            foreach ($data['rows'] ?? [] as $row) {
+                $page = $row['keys'][0] ?? null;
+
+                if ($page) {
+                    $pages[] = [
+                        'page' => $page,
+                        'clicks' => (int) ($row['clicks'] ?? 0),
+                        'impressions' => (int) ($row['impressions'] ?? 0),
+                        'ctr' => (float) ($row['ctr'] ?? 0),
+                        'position' => round((float) ($row['position'] ?? 0), 1),
+                    ];
+                }
+            }
+
+            return $pages;
+        } catch (\Exception $e) {
+            Log::error('Exception while fetching GSC pages', [
+                'user_id' => $user->id,
+                'site_url' => $siteUrl,
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
+    }
 }

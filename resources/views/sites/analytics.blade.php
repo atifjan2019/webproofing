@@ -334,6 +334,86 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Top Pages -->
+                <section class="card" x-show="hasGsc">
+                    <div class="card-body">
+                        <h3 class="font-semibold text-black mb-lg">Top Pages</h3>
+
+                        <div class="table-responsive" x-show="gscPages && gscPages.length > 0">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th @click="sortPages('page')" class="cursor-pointer hover:bg-gray-50">
+                                            Page
+                                            <span x-show="pagesSortCol === 'page'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                        <th class="text-right cursor-pointer hover:bg-gray-50"
+                                            @click="sortPages('clicks')">
+                                            Clicks
+                                            <span x-show="pagesSortCol === 'clicks'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                        <th class="text-right cursor-pointer hover:bg-gray-50"
+                                            @click="sortPages('impressions')">
+                                            Impressions
+                                            <span x-show="pagesSortCol === 'impressions'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                        <th class="text-right cursor-pointer hover:bg-gray-50"
+                                            @click="sortPages('ctr')">
+                                            CTR
+                                            <span x-show="pagesSortCol === 'ctr'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                        <th class="text-right cursor-pointer hover:bg-gray-50"
+                                            @click="sortPages('position')">
+                                            Position
+                                            <span x-show="pagesSortCol === 'position'"
+                                                x-text="pagesSortAsc ? '↑' : '↓'"></span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="(p, index) in paginatedPages" :key="index">
+                                        <tr>
+                                            <td class="truncate" style="max-width: 300px;" :title="p.page">
+                                                <a :href="p.page" target="_blank" class="text-primary hover:underline"
+                                                    x-text="p.page"></a>
+                                            </td>
+                                            <td class="text-right" x-text="formatNumber(p.clicks)"></td>
+                                            <td class="text-right" x-text="formatNumber(p.impressions)"></td>
+                                            <td class="text-right" x-text="formatPercent(p.ctr)"></td>
+                                            <td class="text-right" x-text="p.position"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination Controls -->
+                        <div class="flex items-center justify-between mt-md" x-show="sortedPages.length > pageSize">
+                            <div class="text-sm text-secondary">
+                                Showing <span x-text="(currentPage - 1) * pageSize + 1"></span> to <span
+                                    x-text="Math.min(currentPage * pageSize, sortedPages.length)"></span> of <span
+                                    x-text="sortedPages.length"></span>
+                            </div>
+                            <div class="flex gap-xs">
+                                <button @click="prevPage" :disabled="currentPage === 1" class="btn btn-secondary btn-sm"
+                                    :class="{'opacity-50 cursor-not-allowed': currentPage === 1}">Previous</button>
+                                <button @click="nextPage" :disabled="currentPage === totalPages"
+                                    class="btn btn-secondary btn-sm"
+                                    :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}">Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Empty Pages State -->
+                        <div x-show="!gscPages || gscPages.length === 0" class="text-center py-xl">
+                            <p class="text-muted">No pages found for this period.</p>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </div>
@@ -398,6 +478,13 @@
                 chartInstance: null,
                 dailyData: [],
                 gscQueries: [],
+                gscPages: [],
+
+                // Pages Sorting & Pagination
+                pagesSortCol: 'clicks',
+                pagesSortAsc: false,
+                currentPage: 1,
+                pageSize: 10,
 
                 // GSC Filter States
                 gscFilterPreset: 'none',
@@ -471,9 +558,9 @@
                         this.dateRange = data.date_range;
                         this.cachedAt = data.cached_at || null;
 
-                        // Store daily data and render chart
                         this.dailyData = data.daily || [];
                         this.gscQueries = data.gsc_queries || [];
+                        this.gscPages = data.gsc_pages || [];
                         this.renderChart(data.daily);
 
                     } catch (e) {
@@ -621,6 +708,56 @@
                         month: 'short',
                         day: 'numeric'
                     });
+                },
+
+                sortPages(col) {
+                    if (this.pagesSortCol === col) {
+                        this.pagesSortAsc = !this.pagesSortAsc;
+                    } else {
+                        this.pagesSortCol = col;
+                        // Default sort direction based on column type
+                        // Text columns (page) default to Asc
+                        // Numeric columns (clicks, imp, ctr) default to Desc
+                        this.pagesSortAsc = (col === 'page');
+                    }
+                },
+
+                get sortedPages() {
+                    return [...this.gscPages].sort((a, b) => {
+                        let valA = a[this.pagesSortCol];
+                        let valB = b[this.pagesSortCol];
+
+                        if (typeof valA === 'string') {
+                            valA = valA.toLowerCase();
+                            valB = valB.toLowerCase();
+                        }
+
+                        if (valA < valB) return this.pagesSortAsc ? -1 : 1;
+                        if (valA > valB) return this.pagesSortAsc ? 1 : -1;
+                        return 0;
+                    });
+                },
+
+                get paginatedPages() {
+                    const start = (this.currentPage - 1) * this.pageSize;
+                    const end = start + this.pageSize;
+                    return this.sortedPages.slice(start, end);
+                },
+
+                get totalPages() {
+                    return Math.ceil(this.sortedPages.length / this.pageSize);
+                },
+
+                nextPage() {
+                    if (this.currentPage < this.totalPages) {
+                        this.currentPage++;
+                    }
+                },
+
+                prevPage() {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                    }
                 }
             }
         }

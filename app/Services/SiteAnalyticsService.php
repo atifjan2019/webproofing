@@ -31,6 +31,7 @@ class SiteAnalyticsService
             'ga4' => null,
             'gsc' => null,
             'gsc_queries' => null,
+            'gsc_pages' => null,
             'daily' => [],
             'cached_at' => now()->toIso8601String(),
         ];
@@ -83,6 +84,15 @@ class SiteAnalyticsService
                 $endDate,
                 20,
                 $gscFilters
+            );
+
+            // Fetch top pages
+            $response['gsc_pages'] = $this->gscService->fetchGscPages(
+                $user,
+                $site->gsc_site_url,
+                $startDate,
+                $endDate,
+                25000
             );
         }
 
