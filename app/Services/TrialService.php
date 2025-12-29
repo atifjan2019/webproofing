@@ -21,12 +21,12 @@ class TrialService
         // If user has free access, they can add unlimited sites
         // We create a trial record but it acts differently in status check
         if ($user && $user->has_free_access) {
-             return TrialDomain::create([
+            return TrialDomain::create([
                 'domain' => $site->domain,
                 'user_id' => $site->user_id,
                 'site_id' => $site->id,
                 'trial_started_at' => now(),
-                'trial_ends_at' => now()->addYears(100), // Effectively forever
+                'trial_ends_at' => now()->addYears(10), // Effectively forever (within timestamp limits)
                 'is_expired' => false,
             ]);
         }
@@ -56,7 +56,8 @@ class TrialService
      */
     public function hasUserUsedTrialAllowance($user): bool
     {
-        if (!$user) return false;
+        if (!$user)
+            return false;
         return TrialDomain::where('user_id', $user->id)->exists();
     }
 
@@ -139,7 +140,7 @@ class TrialService
 
         // Special override for Free Access / Super Admin
         if ($user && $user->has_free_access) {
-             return [
+            return [
                 'status' => 'active_free',
                 'label' => 'Active Free Account',
                 'message' => 'You have free access to all features.',
@@ -186,7 +187,7 @@ class TrialService
             // Case 1: Domain used elsewhere
             $existingTrial = $this->getTrialForDomain($site->domain);
             if ($existingTrial) {
-                 return [
+                return [
                     'status' => 'paused',
                     'label' => 'Upgrade Required',
                     'message' => 'This domain has already used its free trial.',
