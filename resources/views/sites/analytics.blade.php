@@ -498,6 +498,9 @@
         }
 
         function analyticsDashboard() {
+            // Internal non-reactive variable for chart instance
+            let _chartInstance = null;
+
             return {
                 loading: false,
                 error: null,
@@ -507,7 +510,6 @@
                 gsc: {},
                 dateRange: {},
                 cachedAt: null,
-                chartInstance: null,
                 dailyData: [],
                 gscQueries: [],
                 gscPages: [],
@@ -608,7 +610,11 @@
                             this.currentPage = 1;
 
                             this.gscPages = data.gsc_pages || [];
-                            this.renderChart(data.daily);
+
+                            // Wait for Alpine to update x-show visibility before rendering chart
+                            this.$nextTick(() => {
+                                this.renderChart(data.daily);
+                            });
                         } else if (type === 'queries') {
                             // Only update queries
                             this.gscQueries = data.gsc_queries || [];
@@ -634,8 +640,9 @@
                         return;
                     }
 
-                    if (this.chartInstance) {
-                        this.chartInstance.destroy();
+                    if (_chartInstance) {
+                        _chartInstance.destroy();
+                        _chartInstance = null;
                     }
 
                     if (!dailyData || dailyData.length === 0) return;
@@ -671,7 +678,8 @@
                         });
                     }
 
-                    this.chartInstance = new Chart(ctx, {
+                    // Store chart instance on the DOM element or as a non-reactive property
+                    _chartInstance = new Chart(ctx, {
                         type: 'line',
                         data: {
                             labels: dailyData.map(d => {
