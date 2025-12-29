@@ -324,12 +324,12 @@
                                                         :class="p.clicks_growth > 0 ? 'text-success' : (p.clicks_growth < 0 ? 'text-danger' : 'text-muted')"
                                                         x-text="p.clicks_growth > 0 ? '+' + p.clicks_growth + '%' : p.clicks_growth + '%'">
                                                     </span>
-                                                    <svg x-show="p.clicks_growth > 0" class="w-3 h-3 text-success"
+                                                    <svg x-show="p.clicks_growth > 0" class="w-2 h-2 text-success"
                                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                                     </svg>
-                                                    <svg x-show="p.clicks_growth < 0" class="w-3 h-3 text-danger"
+                                                    <svg x-show="p.clicks_growth < 0" class="w-2 h-2 text-danger"
                                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
@@ -443,12 +443,12 @@
                                                         :class="q.clicks_growth > 0 ? 'text-success' : (q.clicks_growth < 0 ? 'text-danger' : 'text-muted')"
                                                         x-text="q.clicks_growth > 0 ? '+' + q.clicks_growth + '%' : q.clicks_growth + '%'">
                                                     </span>
-                                                    <svg x-show="q.clicks_growth > 0" class="w-3 h-3 text-success"
+                                                    <svg x-show="q.clicks_growth > 0" class="w-2 h-2 text-success"
                                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                                     </svg>
-                                                    <svg x-show="q.clicks_growth < 0" class="w-3 h-3 text-danger"
+                                                    <svg x-show="q.clicks_growth < 0" class="w-2 h-2 text-danger"
                                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
