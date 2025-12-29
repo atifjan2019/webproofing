@@ -16,7 +16,7 @@ class SiteAnalyticsService
     ) {
     }
 
-    public function getSiteMetrics(User $user, Site $site, string $period, array $gscFilters = []): array
+    public function getSiteMetrics(User $user, Site $site, string $period, array $gscFilters = [], array $types = ['all']): array
     {
         $dates = $this->calculateDates($period);
         $startDate = $dates['start'];
@@ -37,7 +37,7 @@ class SiteAnalyticsService
         ];
 
         // Fetch GA4 Data
-        if ($site->hasGa4() && $user->googleAccount) {
+        if ($site->hasGa4() && $user->googleAccount && (in_array('all', $types) || in_array('ga4', $types))) {
             $response['ga4'] = $this->ga4Service->fetchGa4Summary(
                 $user,
                 $site->ga4_property_id,
@@ -57,43 +57,48 @@ class SiteAnalyticsService
 
         // Fetch GSC Data
         if ($site->hasGsc() && $user->googleAccount) {
-            // Overall performance usually doesn't need the query filter, 
-            // but if we want to filter the OVERALL stats by query, we can pass it here too.
-            // For now, let's just stick to the queries table as per the article's focus.
-            $response['gsc'] = $this->gscService->fetchGscPerformance(
-                $user,
-                $site->gsc_site_url,
-                $startDate,
-                $endDate
-            );
 
-            // Daily Data
-            $gscDaily = $this->gscService->fetchGscDaily(
-                $user,
-                $site->gsc_site_url,
-                $startDate,
-                $endDate
-            );
-            $this->mergeDailyData($response['daily'], $gscDaily, 'gsc');
+            // Overall GSC Stats & Daily
+            if (in_array('all', $types) || in_array('gsc', $types)) {
+                $response['gsc'] = $this->gscService->fetchGscPerformance(
+                    $user,
+                    $site->gsc_site_url,
+                    $startDate,
+                    $endDate
+                );
+
+                // Daily Data
+                $gscDaily = $this->gscService->fetchGscDaily(
+                    $user,
+                    $site->gsc_site_url,
+                    $startDate,
+                    $endDate
+                );
+                $this->mergeDailyData($response['daily'], $gscDaily, 'gsc');
+            }
 
             // Fetch top queries WITH filters
-            $response['gsc_queries'] = $this->gscService->fetchGscQueries(
-                $user,
-                $site->gsc_site_url,
-                $startDate,
-                $endDate,
-                20,
-                $gscFilters
-            );
+            if (in_array('all', $types) || in_array('queries', $types)) {
+                $response['gsc_queries'] = $this->gscService->fetchGscQueries(
+                    $user,
+                    $site->gsc_site_url,
+                    $startDate,
+                    $endDate,
+                    5000,
+                    $gscFilters
+                );
+            }
 
             // Fetch top pages
-            $response['gsc_pages'] = $this->gscService->fetchGscPages(
-                $user,
-                $site->gsc_site_url,
-                $startDate,
-                $endDate,
-                25000
-            );
+            if (in_array('all', $types) || in_array('pages', $types)) {
+                $response['gsc_pages'] = $this->gscService->fetchGscPages(
+                    $user,
+                    $site->gsc_site_url,
+                    $startDate,
+                    $endDate,
+                    25000
+                );
+            }
         }
 
         // Sort daily data by date

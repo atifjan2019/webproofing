@@ -153,6 +153,9 @@ class GooglePropertiesController extends Controller
         $refresh = $request->boolean('refresh', false);
         $gscRegex = $request->input('gsc_regex');
 
+        $type = $request->input('type', 'all');
+        $types = ($type === 'all') ? ['all'] : [$type];
+
         $gscFilters = [];
         if ($gscRegex) {
             $gscFilters[] = [
@@ -165,7 +168,9 @@ class GooglePropertiesController extends Controller
         // Cache key includes date to ensure daily freshness and filters to separate results
         $dateKey = now()->format('Y-m-d');
         $filterHash = $gscRegex ? '_' . md5($gscRegex) : '';
-        $cacheKey = "site_analytics_{$site->id}_{$period}_{$dateKey}{$filterHash}";
+        $typeHash = ($type !== 'all') ? '_' . $type : '';
+
+        $cacheKey = "site_analytics_v3_{$site->id}_{$period}_{$dateKey}{$filterHash}{$typeHash}";
 
         if ($refresh) {
             Cache::forget($cacheKey);
@@ -174,8 +179,8 @@ class GooglePropertiesController extends Controller
         // Dynamic TTL: 'today' needs frequent updates, historical data cached for 12 hours (2x/day)
         $ttl = ($period === 'today') ? now()->addMinutes(30) : now()->addHours(12);
 
-        $response = Cache::remember($cacheKey, $ttl, function () use ($user, $site, $period, $analyticsService, $gscFilters) {
-            $data = $analyticsService->getSiteMetrics($user, $site, $period, $gscFilters);
+        $response = Cache::remember($cacheKey, $ttl, function () use ($user, $site, $period, $analyticsService, $gscFilters, $types) {
+            $data = $analyticsService->getSiteMetrics($user, $site, $period, $gscFilters, $types);
             $data['cached_at'] = now()->toISOString();
             return $data;
         });

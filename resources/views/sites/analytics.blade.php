@@ -272,7 +272,6 @@
                                 <p class="text-sm text-secondary">Analyze top queries using RegEx filters.</p>
                             </div>
 
-                            <!-- GSC RegEx Filter UI -->
                             <div class="flex flex-wrap items-center gap-sm">
                                 <div class="relative">
                                     <select x-model="gscFilterPreset" @change="handlePresetChange"
@@ -295,13 +294,21 @@
                                         style="width: 200px; height: 38px; border-radius: 8px; border: 1px solid var(--color-border);">
                                 </div>
 
-                                <button @click="applyFilter" class="btn btn-secondary btn-sm" style="height: 38px;">
-                                    Apply
+                                <button @click="applyFilter" class="btn btn-secondary btn-sm" style="height: 38px;"
+                                    :disabled="queriesLoading">
+                                    <span x-show="!queriesLoading">Apply</span>
+                                    <span x-show="queriesLoading" class="animate-spin">⟳</span>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="table-responsive" x-show="gscQueries && gscQueries.length > 0">
+                        <!-- Loading State for Queries -->
+                        <div x-show="queriesLoading" class="text-center py-xl">
+                            <div class="spinner border-t-accent w-8 h-8 rounded-full animate-spin mx-auto mb-md"></div>
+                            <p class="text-xs text-muted">Updating queries...</p>
+                        </div>
+
+                        <div class="table-responsive" x-show="!queriesLoading && gscQueries && gscQueries.length > 0">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -313,7 +320,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template x-for="(q, index) in gscQueries" :key="index">
+                                    <template x-for="(q, index) in paginatedQueries" :key="index">
                                         <tr>
                                             <td>
                                                 <span class="font-medium" x-text="q.query"></span>
@@ -328,8 +335,27 @@
                             </table>
                         </div>
 
+                        <!-- Queries Pagination Controls -->
+                        <div class="flex items-center justify-between mt-md"
+                            x-show="!queriesLoading && gscQueries && gscQueries.length > queriesPageSize">
+                            <div class="text-sm text-secondary">
+                                Showing <span x-text="(queriesCurrentPage - 1) * queriesPageSize + 1"></span> to <span
+                                    x-text="Math.min(queriesCurrentPage * queriesPageSize, gscQueries.length)"></span>
+                                of <span x-text="gscQueries.length"></span>
+                            </div>
+                            <div class="flex gap-xs">
+                                <button @click="prevQueriesPage" :disabled="queriesCurrentPage === 1"
+                                    class="btn btn-secondary btn-sm"
+                                    :class="{'opacity-50 cursor-not-allowed': queriesCurrentPage === 1}">Previous</button>
+                                <button @click="nextQueriesPage" :disabled="queriesCurrentPage === queriesTotalPages"
+                                    class="btn btn-secondary btn-sm"
+                                    :class="{'opacity-50 cursor-not-allowed': queriesCurrentPage === queriesTotalPages}">Next</button>
+                            </div>
+                        </div>
+
                         <!-- Empty Queries State -->
-                        <div x-show="!gscQueries || gscQueries.length === 0" class="text-center py-xl">
+                        <div x-show="!queriesLoading && (!gscQueries || gscQueries.length === 0)"
+                            class="text-center py-xl">
                             <p class="text-muted">No queries found for this period/filter.</p>
                         </div>
                     </div>
@@ -490,6 +516,9 @@
                 gscFilterPreset: 'none',
                 gscFilterExpression: '',
                 lastFilter: { period: '7d', refresh: false },
+                queriesLoading: false,
+                queriesCurrentPage: 1,
+                queriesPageSize: 10,
 
                 init() {
                     // Listen for filter-changed events from the period filter
@@ -524,13 +553,17 @@
                 },
 
                 applyFilter() {
-                    this.fetchData(this.lastFilter);
+                    // For filtering only queries, passed 'queries' type
+                    this.fetchData(this.lastFilter, 'queries');
                 },
 
-                async fetchData(filter) {
-                    this.loading = true;
-                    // Notify filter about loading state
-                    window.dispatchEvent(new CustomEvent('analytics-loading', { detail: true }));
+                async fetchData(filter, type = 'all') {
+                    if (type === 'all') {
+                        this.loading = true;
+                        window.dispatchEvent(new CustomEvent('analytics-loading', { detail: true }));
+                    } else if (type === 'queries') {
+                        this.queriesLoading = true;
+                    }
 
                     this.error = null;
 
@@ -540,6 +573,9 @@
                         if (filter.refresh) {
                             url.searchParams.append('refresh', '1');
                         }
+
+                        // Pass type param
+                        url.searchParams.append('type', type);
 
                         // Add GSC regex filter if present
                         if (this.gscFilterExpression) {
@@ -551,24 +587,38 @@
 
                         const data = await res.json();
 
-                        this.ga4 = data.ga4 || {};
-                        this.gsc = data.gsc || {};
-                        this.hasGa4 = !!data.ga4;
-                        this.hasGsc = !!data.gsc;
-                        this.dateRange = data.date_range;
-                        this.cachedAt = data.cached_at || null;
+                        if (type === 'all') {
+                            this.ga4 = data.ga4 || {};
+                            this.gsc = data.gsc || {};
+                            this.hasGa4 = !!data.ga4;
+                            this.hasGsc = !!data.gsc;
+                            this.dateRange = data.date_range;
+                            this.cachedAt = data.cached_at || null;
 
-                        this.dailyData = data.daily || [];
-                        this.gscQueries = data.gsc_queries || [];
-                        this.gscPages = data.gsc_pages || [];
-                        this.renderChart(data.daily);
+                            this.dailyData = data.daily || [];
+                            this.gscQueries = data.gsc_queries || [];
+                            // Reset pagination on new data fetch
+                            this.queriesCurrentPage = 1;
+                            this.currentPage = 1;
+
+                            this.gscPages = data.gsc_pages || [];
+                            this.renderChart(data.daily);
+                        } else if (type === 'queries') {
+                            // Only update queries
+                            this.gscQueries = data.gsc_queries || [];
+                            this.queriesCurrentPage = 1; // Reset queries pagination
+                        }
 
                     } catch (e) {
                         console.error(e);
                         this.error = 'Failed to load data. Please try again.';
                     } finally {
-                        this.loading = false;
-                        window.dispatchEvent(new CustomEvent('analytics-loading', { detail: false }));
+                        if (type === 'all') {
+                            this.loading = false;
+                            window.dispatchEvent(new CustomEvent('analytics-loading', { detail: false }));
+                        } else {
+                            this.queriesLoading = false;
+                        }
                     }
                 },
 
@@ -757,6 +807,29 @@
                 prevPage() {
                     if (this.currentPage > 1) {
                         this.currentPage--;
+                    }
+                },
+
+                // Queries Pagination Logic
+                get paginatedQueries() {
+                    const start = (this.queriesCurrentPage - 1) * this.queriesPageSize;
+                    const end = start + this.queriesPageSize;
+                    return (this.gscQueries || []).slice(start, end);
+                },
+
+                get queriesTotalPages() {
+                    return Math.ceil((this.gscQueries || []).length / this.queriesPageSize);
+                },
+
+                nextQueriesPage() {
+                    if (this.queriesCurrentPage < this.queriesTotalPages) {
+                        this.queriesCurrentPage++;
+                    }
+                },
+
+                prevQueriesPage() {
+                    if (this.queriesCurrentPage > 1) {
+                        this.queriesCurrentPage--;
                     }
                 }
             }
