@@ -45,7 +45,7 @@ class AdminDashboardController extends Controller
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10)
-            ->withQueryString();
+            ->appends($request->query());
 
         return view('admin.users', compact('users', 'search'));
     }
