@@ -29,15 +29,25 @@ class PageSpeedService
         }
 
         try {
+            // Manually build query string for repeated 'category' parameters
+            $categories = ['performance', 'accessibility', 'best-practices', 'seo'];
+            $queryParams = [
+                'url' => $url,
+                'key' => $this->apiKey,
+                'strategy' => $strategy,
+            ];
+
+            $queryString = http_build_query($queryParams);
+
+            // Append categories without array brackets
+            foreach ($categories as $cat) {
+                $queryString .= '&category=' . $cat;
+            }
+
             $response = Http::timeout(150)
                 ->withHeaders([
                     'Referer' => config('app.url'),
-                ])->get($this->baseUrl, [
-                        'url' => $url,
-                        'key' => $this->apiKey,
-                        'strategy' => $strategy,
-                        'category' => ['performance', 'accessibility', 'best-practices', 'seo'],
-                    ]);
+                ])->get($this->baseUrl . '?' . $queryString);
 
             if (!$response->successful()) {
                 $errorData = $response->json();

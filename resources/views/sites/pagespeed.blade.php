@@ -707,7 +707,7 @@
                     <div class="flex items-center gap-md flex-wrap">
                         <!-- Strategy Toggle -->
                         <div class="strategy-toggle">
-                            <button @click="strategy = 'mobile'; loadStoredMetrics()" class="strategy-btn"
+                            <button @click="strategy = 'mobile'" class="strategy-btn"
                                 :class="strategy === 'mobile' ? 'active' : ''">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -715,7 +715,7 @@
                                 </svg>
                                 Mobile
                             </button>
-                            <button @click="strategy = 'desktop'; loadStoredMetrics()" class="strategy-btn"
+                            <button @click="strategy = 'desktop'" class="strategy-btn"
                                 :class="strategy === 'desktop' ? 'active' : ''">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -909,6 +909,7 @@
 
                 init() {
                     this.loadStoredMetrics();
+                    this.$watch('strategy', () => this.loadStoredMetrics());
                 },
 
                 loadStoredMetrics() {
