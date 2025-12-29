@@ -52,13 +52,13 @@
                                 Console. Analytics data is typically near real-time.</span>
                         </span>
                     </div>
-                    <span class="data-delay-notice">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Last 7 days (available data)
-                    </span>
+                    <!-- <span class="data-delay-notice">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            Last 7 days (available data)
+                        </span> -->
                 </div>
 
                 <!-- Loading State -->
