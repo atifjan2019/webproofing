@@ -181,9 +181,15 @@
                 <!-- Daily Chart (Using simple bars for now) -->
                 <section class="card card-body">
                     <h3 class="font-semibold text-black mb-lg">Daily Activity</h3>
-                    <div style="height: 300px; position: relative;">
+
+                    <div style="height: 300px; position: relative;" x-show="dailyData && dailyData.length > 0">
                         <!-- Canvas for Chart.js -->
                         <canvas id="dailyChart"></canvas>
+                    </div>
+
+                    <div x-show="!dailyData || dailyData.length === 0" class="flex items-center justify-center"
+                        style="height: 300px;">
+                        <p class="text-muted">No activity data available for this period.</p>
                     </div>
                 </section>
 
@@ -623,13 +629,22 @@
                 },
 
                 renderChart(dailyData) {
+                    if (typeof Chart === 'undefined') {
+                        console.error('Chart.js is not loaded');
+                        return;
+                    }
+
                     if (this.chartInstance) {
                         this.chartInstance.destroy();
                     }
 
                     if (!dailyData || dailyData.length === 0) return;
 
-                    const ctx = document.getElementById('dailyChart').getContext('2d');
+                    // Ensure element exists
+                    const canvas = document.getElementById('dailyChart');
+                    if (!canvas) return;
+
+                    const ctx = canvas.getContext('2d');
 
                     // Datasets
                     const datasets = [];
