@@ -66,16 +66,41 @@
                         <input type="hidden" name="ga4_property_name" id="ga4_property_name" value="{{ $site->ga4_property_name }}">
                     </div>
                 @else
-                    <div class="empty-state-explained">
-
-                        <h4>No GA4 properties found</h4>
-                        <p>We couldn't find any Google Analytics 4 properties for your connected account.</p>
-                        <ul class="empty-state-reasons">
-                            <li>You may only have Universal Analytics (UA) properties - only GA4 is supported</li>
-                            <li>You might have access via a different Google account</li>
-                            <li>You may have viewer-only access which requires direct property invitation</li>
-                        </ul>
+                    <div class="empty-state-explained text-center py-xl">
+                        <div class="inline-flex items-center justify-center p-md rounded-2xl bg-gray-50 mb-lg" style="width: 4rem; height: 4rem;">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-semibold text-black mb-sm">No GA4 Properties Found</h4>
+                        <p class="text-secondary mb-lg max-w-md mx-auto">We couldn't detect any Google Analytics 4 properties linked to your account.</p>
                         
+                        <div class="bg-gray-50 rounded-xl p-lg text-left max-w-lg mx-auto mb-xl border border-gray-100">
+                            <p class="text-sm font-medium text-black mb-sm">Possible reasons:</p>
+                            <ul class="space-y-2 text-sm text-secondary">
+                                <li class="flex items-start gap-sm">
+                                    <span class="text-gray-400">•</span>
+                                    Only Universal Analytics (UA) properties exist
+                                </li>
+                                <li class="flex items-start gap-sm">
+                                    <span class="text-gray-400">•</span>
+                                    Properties are under a different Google account
+                                </li>
+                                <li class="flex items-start gap-sm">
+                                    <span class="text-gray-400">•</span>
+                                    Insufficient permissions (Viewer-only access)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="flex justify-center">
+                            <a href="{{ route('google.connect') }}" class="btn-reconnect">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Sync Google Account
+                            </a>
+                        </div>
                     </div>
                 @endif
             </div>
