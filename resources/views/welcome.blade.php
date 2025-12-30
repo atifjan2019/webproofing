@@ -1290,7 +1290,7 @@
             <div class="section-header">
                 <h2>What is WebProofing?</h2>
                 <p>A simple tool that shows you exactly what your website looks like and how it's
-                    performing—automatically.</p>
+                    performing, automatically.</p>
             </div>
             <div class="feature-grid">
                 <div class="feature-card">
@@ -1301,7 +1301,7 @@
                         </svg>
                     </div>
                     <h3>Daily Screenshots</h3>
-                    <p>Twice-daily browser screenshots capture exactly what your site looks like—visual proof it's
+                    <p>Twice-daily browser screenshots capture exactly what your site looks like - visual proof it's
                         working</p>
                 </div>
                 <div class="feature-card">
@@ -1323,7 +1323,7 @@
                         </svg>
                     </div>
                     <h3>Google Analytics 4</h3>
-                    <p>Your GA4 data in one view—visitors, page views, sessions, bounce rate, and traffic trends over
+                    <p>Your GA4 data in one view: visitors, page views, sessions, bounce rate, and traffic trends over
                         time</p>
                 </div>
                 <div class="feature-card">
@@ -1334,8 +1334,31 @@
                         </svg>
                     </div>
                     <h3>Search Console</h3>
-                    <p>Track your Google search performance—clicks, impressions, CTR, average position, and top queries
+                    <p>Track your Google search performance: clicks, impressions, CTR, average position, and top queries
                     </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                    </div>
+                    <h3>Trend Comparisons</h3>
+                    <p>Compare performance against previous periods. See exactly what's growing and what's dropping week
+                        over week.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                    </div>
+                    <h3>On-Demand Checks</h3>
+                    <p>Don't wait for the schedule. Manually trigger fresh screenshots and speed tests whenever you
+                        update
+                        your site.</p>
                 </div>
             </div>
         </div>
@@ -1742,27 +1765,30 @@
                             <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">Search Console
                                 Performance</span>
                         </div>
-                        <div class="feature-item" style="padding: 0; align-items: center;">
-                            <svg class="feature-icon-check" style="color: #10b981; width: 1.5rem; height: 1.5rem;"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">7-Day Visual
-                                History</span>
-                        </div>
+                        <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">7-Day Visual
+                            History</span>
                     </div>
-
-                    <a href="{{ route('register') }}" class="btn btn-primary"
-                        style="width: 100%; padding: 1rem; font-size: 1.125rem; margin-top: 1rem;">
-                        Start 7-Day Free Trial
-                    </a>
-
-                    <div class="guarantee-badge" style="margin-top: 1.25rem; opacity: 0.7;">
-                        <span>✓ Cancel anytime • No credit card required</span>
+                    <div class="feature-item" style="padding: 0; align-items: center;">
+                        <svg class="feature-icon-check" style="color: #10b981; width: 1.5rem; height: 1.5rem;"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span class="feature-text" style="font-size: 1rem; color: var(--color-text);">On-Demand
+                            Analysis</span>
                     </div>
                 </div>
+
+                <a href="{{ route('register') }}" class="btn btn-primary"
+                    style="width: 100%; padding: 1rem; font-size: 1.125rem; margin-top: 1rem;">
+                    Start 7-Day Free Trial
+                </a>
+
+                <div class="guarantee-badge" style="margin-top: 1.25rem; opacity: 0.7;">
+                    <span>✓ Cancel anytime • No credit card required</span>
+                </div>
             </div>
+        </div>
 
         </div>
     </section>
@@ -1870,7 +1896,8 @@
                     <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
                         <p
                             style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; padding-bottom: 1.25rem;">
-                            Uptime tools only check if your site returns a 200 status—they can't see if your homepage is
+                            Uptime tools only check if your site returns a 200 status - they can't see if your homepage
+                            is
                             blank or layout is broken. WebProofing uses a real browser to capture what your site
                             <em>actually looks like</em>, plus measures PageSpeed performance.
                         </p>
@@ -1960,7 +1987,7 @@
                         <p
                             style="color: var(--color-text-muted); font-size: 0.9375rem; line-height: 1.7; padding-bottom: 1.25rem;">
                             Absolutely! We offer a <strong>7-day free trial</strong> with no credit card required. Test
-                            all features—screenshots, PageSpeed, GA4, and Search Console—before committing.
+                            all features - screenshots, PageSpeed, GA4, and Search Console - before committing.
                         </p>
                     </div>
                 </div>
