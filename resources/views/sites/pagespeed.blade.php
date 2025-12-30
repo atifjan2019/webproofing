@@ -1,191 +1,23 @@
 <x-app-layout>
     <style>
-        /* PageSpeed Insights Premium Styles */
-        .psi-hero {
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
-            position: relative;
-            overflow: hidden;
-            padding: 3rem 0 4rem;
-        }
-
-        .psi-hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(238, 49, 79, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 70% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
-            animation: heroGlow 15s ease-in-out infinite;
-        }
-
-        @keyframes heroGlow {
-
-            0%,
-            100% {
-                transform: rotate(0deg);
-            }
-
-            50% {
-                transform: rotate(180deg);
-            }
-        }
-
-        .psi-hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* URL Display Card */
-        .url-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1.5rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .url-display {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .url-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--color-accent) 0%, #ff6b6b 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(238, 49, 79, 0.3);
-        }
-
-        .url-icon svg {
-            width: 24px;
-            height: 24px;
-            color: white;
-        }
-
-        .url-text {
-            color: white;
-            font-family: ui-monospace, monospace;
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        .url-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 0.25rem;
-        }
-
-        /* Strategy Toggle */
-        .strategy-toggle {
-            display: flex;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .strategy-btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.6);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .strategy-btn:hover {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .strategy-btn.active {
-            background: white;
-            color: #0f0f0f;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .strategy-btn svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Retest Button */
-        .retest-btn {
-            padding: 0.75rem 2rem;
-            background: linear-gradient(135deg, var(--color-accent) 0%, #ff6b6b 100%);
-            color: white;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(238, 49, 79, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .retest-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(238, 49, 79, 0.4);
-        }
-
-        .retest-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
+        /* PageSpeed Insights Custom Styles */
         /* Results Section */
         .psi-results {
             padding: 0;
             position: relative;
-            margin-top: -2rem;
         }
 
         /* Main Score Ring */
         .score-ring-wrapper {
             text-align: center;
-            padding: 3rem 0;
+            padding: 2rem 0;
         }
 
         .score-ring-container {
             position: relative;
             width: 220px;
             height: 220px;
-            margin: 0 auto 2rem;
+            margin: 0 auto 1.5rem;
         }
 
         .score-ring-bg {
@@ -235,10 +67,6 @@
         .score-value {
             font-size: 4rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
             line-height: 1;
         }
 
@@ -664,93 +492,123 @@
         .score-counter {
             display: inline-block;
         }
+
+        /* New Header Controls Styles */
+        .header-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .strategy-toggle-clean {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+        }
+
+        .strategy-btn-clean {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .strategy-btn-clean:hover {
+            color: #0f172a;
+        }
+
+        .strategy-btn-clean.active {
+            background: white;
+            color: #0f172a;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
     </style>
 
-    <div x-data="pageSpeedTest(@js($metrics ?? []))">
-        <!-- Hero Section with Dark Background -->
-        <div class="psi-hero">
-            <div class="psi-hero-content container">
-                <!-- Header -->
-                <div class="flex items-center gap-md mb-xl">
-                    <a href="{{ route('sites.index') }}" class="btn btn-secondary btn-icon"
-                        style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: white;">
-                        <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </a>
-                    <div>
-                        <h1 style="font-size: 1.75rem; font-weight: 700; color: white;">{{ $site->domain }}</h1>
-                        <p style="color: rgba(255,255,255,0.6); font-size: 0.875rem; margin-top: 0.25rem;">Website Speed
-                            Test</p>
-                    </div>
+    <div class="container" x-data="pageSpeedTest(@js($metrics ?? []))">
+        <!-- Header -->
+        <div class="flex flex-col gap-lg mb-lg" style="flex-direction: column;">
+            <div class="flex items-center gap-md">
+                <a href="{{ route('sites.index') }}" class="btn btn-secondary btn-icon">
+                    <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="text-2xl font-bold text-black">{{ $site->domain }}</h1>
+                    <p class="text-muted text-sm mt-xs">Site Overview & Analytics</p>
                 </div>
+            </div>
 
-                @include('sites.partials.nav')
+            <!-- Controls Row -->
+            <div class="flex flex-wrap items-center justify-between gap-md mobile-stack-header">
 
-                <!-- URL Card -->
-                <div class="url-card mt-xl">
-                    <div class="url-display">
-                        <div class="url-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Strategy Toggle & Badge -->
+                <div class="header-controls">
+                    <div class="strategy-toggle-clean">
+                        <button @click="strategy = 'mobile'" class="strategy-btn-clean"
+                            :class="strategy === 'mobile' ? 'active' : ''">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                    d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
-                        </div>
-                        <div>
-                            <div class="url-label">Analyzing URL</div>
-                            <div class="url-text">
-                                {{ str_starts_with($site->domain, 'http') ? $site->domain : 'https://' . $site->domain }}
-                            </div>
-                        </div>
+                            Mobile
+                        </button>
+                        <button @click="strategy = 'desktop'" class="strategy-btn-clean"
+                            :class="strategy === 'desktop' ? 'active' : ''">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Desktop
+                        </button>
                     </div>
 
-                    <div class="flex items-center gap-md flex-wrap">
-                        <!-- Strategy Toggle -->
-                        <div class="strategy-toggle">
-                            <button @click="strategy = 'mobile'" class="strategy-btn"
-                                :class="strategy === 'mobile' ? 'active' : ''">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                </svg>
-                                Mobile
-                            </button>
-                            <button @click="strategy = 'desktop'" class="strategy-btn"
-                                :class="strategy === 'desktop' ? 'active' : ''">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                                Desktop
-                            </button>
-                        </div>
-
-                        @if($trialStatus['can_monitor'])
-                            <!-- Retest Button -->
-                            <button @click="runTest" class="retest-btn" :disabled="loading">
-                                <template x-if="!loading">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                        style="width: 18px; height: 18px;">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                    </svg>
-                                </template>
-                                <div x-show="loading" class="loading-spinner"></div>
-                                <span x-text="loading ? 'Analyzing...' : (results ? 'Retest' : 'Run Analysis')"></span>
-                            </button>
-                        @else
-                            <form action="{{ route('billing.checkout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="retest-btn">Upgrade to Analyze</button>
-                            </form>
-                        @endif
+                    <!-- Analyzing Badge -->
+                    <div class="hidden md:flex items-center gap-xs px-3 py-1 bg-gray-100 rounded-lg text-xs text-muted">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                        <span class="truncate max-w-[200px]">{{ str_starts_with($site->domain, 'http') ? $site->domain :
+    'https://' . $site->domain }}</span>
                     </div>
                 </div>
+
+                <!-- Retest Button -->
+                @if($trialStatus['can_monitor'])
+                    <button @click="runTest" class="btn btn-primary btn-full-mobile" :disabled="loading">
+                        <template x-if="!loading">
+                            <svg class="icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </template>
+                        <div x-show="loading"
+                            class="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin">
+                        </div>
+                        <span x-text="loading ? 'Analyzing...' : 'Run Analysis'"></span>
+                    </button>
+                @else
+                    <form action="{{ route('billing.checkout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-full-mobile">Upgrade to Analyze</button>
+                    </form>
+                @endif
             </div>
         </div>
 
+        @include('sites.partials.nav')
+
         <!-- Results Section -->
-        <div class="psi-results container">
+        <div class="psi-results mt-xl">
             <!-- Error Message -->
             <div x-show="error" x-cloak class="error-alert animate-fade-in">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
